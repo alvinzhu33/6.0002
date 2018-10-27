@@ -193,8 +193,29 @@ def greedy_election(lost_states, ec_votes_needed):
     voters relocated to those states (also can be referred to as our swing states)
     The empty list, if no possible swing states
     """
-    pass
-    #TODO
+    stateVotes = {};
+    for state in lost_states:
+        if state.get_margin() in stateVotes:
+                stateVotes[state.get_margin()][state.get_ecvotes()] = state;
+        else:
+            stateVotes[state.get_margin()] = {state.get_ecvotes(): state};
+
+    swings = [];
+    while len(stateVotes) > 0:
+        if ec_votes_needed < 1:
+            return swings;
+        least = stateVotes[min(stateVotes)];
+        mini = least[max(least)];
+        if len(least) > 1:
+            del least[max(least)];
+        else:
+            del stateVotes[min(stateVotes)];
+        ec_votes_needed -= mini.get_ecvotes();
+        swings += [mini];
+
+    if ec_votes_needed < 1:
+        return swings;
+    return [];
 
 # Problem 5
 def dp_move_max_voters(lost_states, ec_votes, memo = None):
@@ -283,13 +304,13 @@ if __name__ == "__main__":
     print("States lost by the loser: ", names_lost_states, "\n")
 
     # tests Problem 4
-    # print("greedy_election")
-    # greedy_swing = greedy_election(lost_states, ec_votes_needed)
-    # names_greedy_swing = [state.get_name() for state in greedy_swing]
-    # voters_greedy = sum([state.get_margin()+1 for state in greedy_swing])
-    # ecvotes_greedy = sum([state.get_ecvotes() for state in greedy_swing])
-    # print("Greedy swing states results:", names_greedy_swing)
-    # print("Greedy voters displaced:", voters_greedy, "for a total of", ecvotes_greedy, "Electoral College votes.", "\n")
+    print("greedy_election")
+    greedy_swing = greedy_election(lost_states, ec_votes_needed)
+    names_greedy_swing = [state.get_name() for state in greedy_swing]
+    voters_greedy = sum([state.get_margin()+1 for state in greedy_swing])
+    ecvotes_greedy = sum([state.get_ecvotes() for state in greedy_swing])
+    print("Greedy swing states results:", names_greedy_swing)
+    print("Greedy voters displaced:", voters_greedy, "for a total of", ecvotes_greedy, "Electoral College votes.", "\n")
 
     # # tests Problem 5: dp_move_max_voters
     # print("dp_move_max_voters")

@@ -135,7 +135,7 @@ class TestPS1(unittest.TestCase):
         results_2016 = set(state.get_name() for state in ps1.greedy_election(lost_2016,votes_2016))
         results_2012 = set(state.get_name() for state in ps1.greedy_election(lost_2012,votes_2012))
         results_2008 = set(state.get_name() for state in ps1.greedy_election(lost_2008,votes_2008))
-
+        
         self.assertEqual(results_sample, real_sample, "For Sample Results: expected %s, got %s." % (list(real_sample), list(results_sample)))
         self.assertEqual(results_2016, real_2016, "For 2016 Results: expected %s, got %s." % (list(real_2016), list(results_2016)))
         self.assertEqual(results_2012, real_2012, "For 2012 Results: expected %s, got %s." % (list(real_2012), list(results_2012)))
