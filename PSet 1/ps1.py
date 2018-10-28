@@ -276,7 +276,12 @@ def move_min_voters(lost_states, ec_votes_needed):
     voters relocated to those states (also can be referred to as our swing states)
     The empty list, if no possible swing states
     """
-    #return dp_move_max_voters_get(lost_states, ec_votes_needed)[1]
+    total_ec_votes = 0;
+    for state in lost_states:
+        total_ec_votes += state.get_ecvotes();
+    maxx = dp_move_max_voters(lost_states, total_ec_votes-ec_votes_needed);
+    minn = [state for state in lost_states if state not in maxx];
+    return minn;
 
 #Problem 6
 def flip_election(election, swing_states):
@@ -353,11 +358,11 @@ if __name__ == "__main__":
     print("States with the largest margins:", max_states_names)
     print("Max voters displaced:", max_voters_displaced, "for a total of", max_ec_votes, "Electoral College votes.", "\n")
 
-    # # tests Problem 5: move_min_voters
-    # print("move_min_voters")
-    # swing_states = move_min_voters(lost_states, ec_votes_needed)
-    # swing_state_names = [state.get_name() for state in swing_states]
-    # min_voters = sum([state.get_margin()+1 for state in swing_states])
-    # swing_ec_votes = sum([state.get_ecvotes() for state in swing_states])
-    # print("Complementary knapsack swing states results:", swing_state_names)
-    # print("Min voters displaced:", min_voters, "for a total of", swing_ec_votes, "Electoral College votes. \n")
+    # tests Problem 5: move_min_voters
+    print("move_min_voters")
+    swing_states = move_min_voters(lost_states, ec_votes_needed)
+    swing_state_names = [state.get_name() for state in swing_states]
+    min_voters = sum([state.get_margin()+1 for state in swing_states])
+    swing_ec_votes = sum([state.get_ecvotes() for state in swing_states])
+    print("Complementary knapsack swing states results:", swing_state_names)
+    print("Min voters displaced:", min_voters, "for a total of", swing_ec_votes, "Electoral College votes. \n")
