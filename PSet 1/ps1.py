@@ -218,7 +218,7 @@ def greedy_election(lost_states, ec_votes_needed):
     return [];
 
 # Problem 5
-def dp_move_max_voters_get(lost_states, ec_votes, memo = {}):
+def dp_move_max_voters_get(lost_states, ec_votes, memo = None):
     """
     Finds the largest number of voters needed to relocate to get at most ec_votes
     for the election loser. Analogy to the knapsack problem:
@@ -226,7 +226,26 @@ def dp_move_max_voters_get(lost_states, ec_votes, memo = {}):
     determine the states to include in a collection so the total weight(#ec_votes)
     is less than or equal to the given limit(ec_votes) and the total value(#voters displaced)
     is as large as possible.
+    """
+    if (len(lost_states), ec_votes) in memo:
+        result = memo[(len(lost_states), ec_votes)]
+    elif lost_states == [] or ec_votes <= 0:
+        result = (0, ());
+    elif lost_states[0].get_ecvotes() > ec_votes:
+        result = dp_move_max_voters_get(lost_states[1:], ec_votes, memo);
+    else:
+        takeVal, takeLeft = dp_move_max_voters_get(lost_states[1:], ec_votes - lost_states[0].get_ecvotes(), memo);
+        takeVal += lost_states[0].get_margin();
+        leaveVal, leaveLeft = dp_move_max_voters_get(lost_states[1:], ec_votes, memo);
+        if takeVal > leaveVal:
+            result = (takeVal, takeLeft + (lost_states[0],));
+        else:
+            result = (leaveVal, leaveLeft);
+    memo[(len(lost_states), ec_votes)] = result;
+    return result;
 
+def dp_move_max_voters(lost_states, ec_votes, memo = None):
+    '''
     Parameters:
     lost_states - a list of State instances that were lost by the loser
     ec_votes - int, the maximum number of EC votes
@@ -237,27 +256,8 @@ def dp_move_max_voters_get(lost_states, ec_votes, memo = {}):
     A list of State instances such that the maximum number of voters need to be relocated
     to these states in order to get at most ec_votes
     The empty list, if no possible states
-    """
-    if (len(lost_states), ec_votes) in memo:
-        result = memo[(len(lost_states), ec_votes)]
-    elif lost_states == [] or ec_votes <= 0:
-        result = (0, ());
-    elif lost_states[0].get_ecvotes() > ec_votes:
-        result = dp_move_max_voters_get(lost_states[1:], ec_votes, memo);
-    else:
-        nextItem = lost_states[0]
-        takeVal, takeLeft = dp_move_max_voters_get(lost_states[1:], ec_votes - nextItem.get_ecvotes(), memo);
-        takeVal += nextItem.get_margin();
-        leaveVal, leaveLeft = dp_move_max_voters_get(lost_states[1:], ec_votes, memo);
-        if takeVal > leaveVal:
-            result = (takeVal, takeLeft + (nextItem,));
-        else:
-            result = (leaveVal, leaveLeft);
-    memo[(len(lost_states), ec_votes)] = result;
-    return result;
-
-def dp_move_max_voters(lost_states, ec_votes, memo = {}):
-    return dp_move_max_voters_get(lost_states, ec_votes)[1];
+    '''
+    return dp_move_max_voters_get(lost_states, ec_votes, {})[1];
 
 def move_min_voters(lost_states, ec_votes_needed):
     """
@@ -329,11 +329,24 @@ if __name__ == "__main__":
     print("Greedy swing states results:", names_greedy_swing)
     print("Greedy voters displaced:", voters_greedy, "for a total of", ecvotes_greedy, "Electoral College votes.", "\n")
 
+    '''PERSONAL TESTING
+    election2008 = load_election_results("2008_results.txt")
+    lost_states08 = states_lost(election2008)
+    total_lost08 = sum(state.get_ecvotes() for state in lost_states08)
+    ec_votes_needed08 = ec_votes_reqd(election2008)
+    move_max08 = dp_move_max_voters(lost_states08, total_lost08-ec_votes_needed08)
+    print("YOOO",[state.get_name() for state in move_max08])
+    election2016 = load_election_results("2016_results.txt")
+    lost_states16 = states_lost(election2016)
+    total_lost16 = sum(state.get_ecvotes() for state in lost_states16)
+    ec_votes_needed16 = ec_votes_reqd(election2016)
+    move_max16 = dp_move_max_voters(lost_states16, total_lost16-ec_votes_needed16)
+    print("YOOO",[state.get_name() for state in move_max16])'''
+
     # # tests Problem 5: dp_move_max_voters
     print("dp_move_max_voters")
     total_lost = sum(state.get_ecvotes() for state in lost_states)
     move_max = dp_move_max_voters(lost_states, total_lost-ec_votes_needed)
-    print([state.get_name() for state in move_max])
     max_states_names = [state.get_name() for state in move_max]
     max_voters_displaced = sum([state.get_margin()+1 for state in move_max])
     max_ec_votes = sum([state.get_ecvotes() for state in move_max])
