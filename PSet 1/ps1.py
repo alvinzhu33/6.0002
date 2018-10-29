@@ -124,7 +124,7 @@ def find_winner(election):
     """
     votes = {'gop': 0, 'dem':0}
     for state in election:
-        votes[state.get_winner()] += 1;
+        votes[state.get_winner()] += state.get_ecvotes();
     if votes['gop'] > votes['dem']:
         return ('gop', 'dem');
     return ('dem', 'gop')
@@ -306,8 +306,67 @@ def flip_election(election, swing_states):
         - an int, the total number of voters moved
     None, if it is not possible to sway the election
     """
-    pass
-    #TODO
+    lost_states = states_lost(election);
+    win_states = [state for state in election if state not in lost_states];
+    if len(win_states) == 0:
+        return None;
+
+    flip = [{}, 0, 0]
+    '''win_index = 0;
+    marginGive = win_states[win_index].get_margin()-1;
+    swing_index = 0;
+    marginNeed = swing_states[swing_index].get_margin()+1;
+    while win_index < len(win_states) and swing_index < len(swing_states) and flip[1] < ec_reqd:
+        if marginNeed > marginGive:
+            marginNeed -= marginGive;
+            flip[0][(win_states[win_index].get_name(), swing_states[swing_index].get_name())] = marginGive;
+            flip[2] += marginGive;
+            win_index += 1;
+            marginGive = win_states[win_index].get_margin()-1;
+        elif marginNeed == marginGive:
+            flip[0][(win_states[win_index].get_name(), swing_states[swing_index].get_name())] = marginGive;
+            flip[1] += swing_states[swing_index].get_ecvotes();
+            flip[2] += marginGive;
+            win_index += 1;
+            marginGive = win_states[win_index].get_margin()-1;
+            swing_index += 1;
+            marginNeed = swing_states[swing_index].get_margin()+1;
+        else:
+            marginGive -= marginNeed;
+            flip[0][(win_states[win_index].get_name(), swing_states[swing_index].get_name())] = marginNeed;
+            flip[1] += swing_states[swing_index].get_ecvotes();
+            flip[2] += marginNeed;
+            swing_index += 1;
+            marginNeed = swing_states[swing_index].get_margin()+1;
+    return flip;'''
+
+    swing_index = 0;
+    marginNeed = swing_states[swing_index].get_margin()+1;
+    for state in win_states:
+        marginGive = state.get_margin()-1;
+        while swing_index < len(swing_states):
+            if marginNeed == 0:
+                marginNeed = swing_states[swing_index].get_margin() + 1;
+            if marginGive > marginNeed:
+                marginGive -= marginNeed;
+                flip[0][(state.get_name(), swing_states[swing_index].get_name())] = marginNeed;
+                flip[1] += swing_states[swing_index].get_ecvotes();
+                flip[2] += marginNeed;
+                marginNeed = 0;
+                swing_index += 1;
+            elif marginGive == marginNeed:
+                flip[0][(state.get_name(), swing_states[swing_index].get_name())] = marginGive;
+                flip[1] += swing_states[swing_index].get_ecvotes();
+                flip[2] += marginNeed;
+                marginNeed = 0;
+                swing_index += 1;
+            else: #marginGive < marginNeed
+                marginNeed -= marginGive;
+                flip[0][(state.get_name(), swing_states[swing_index].get_name())] = marginGive;
+                flip[2] += marginGive;
+                break;
+    return tuple(flip);
+
 
 if __name__ == "__main__":
     pass
