@@ -297,14 +297,14 @@ def move_min_voters(lost_states, ec_votes_needed):
     voters relocated to those states (also can be referred to as our swing states)
     The empty list, if no possible swing states
     """
-    #move_min_voters is essentially the complement of dp_move_max_voters. We first calculate the total EC votes received by the loser in the states they won.
+    #move_min_voters is essentially the complement of dp_move_max_voters. We thus first calculate the total EC votes received by the loser in the states they won.
     total_ec_votes = 0
     for state in lost_states:
         total_ec_votes += state.get_ecvotes();
 
-    #Call dp_move_max_voters with parameters lost_states and the extra votes they need to win (total EC - votes they need). This gives us the complement of what we want since dp_move_max_voters will tell us which states to phase out (ones with the highest margin and EC votes that are lower than the extra votes we can have)
+    #Call dp_move_max_voters with parameters lost_states and extra votes they can have (total EC - votes they need). This gives us the complement of what we want since dp_move_max_voters will tell us which states to phase out (ones with the highest margin and EC votes that are lower than extra votes we can have)
     maxx = dp_move_max_voters(lost_states, total_ec_votes-ec_votes_needed)
-    minn = [state for state in lost_states if state not in maxx] #Find complement of bad states
+    minn = [state for state in lost_states if state not in maxx] #Find states in lost_states that aren't in the states we want to phase out
     return minn;
 
 #Problem 6
