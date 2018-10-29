@@ -363,8 +363,7 @@ def flip_election(election, swing_states):
                 marginNeed = 0
                 swing_index += 1
                 break;
-            #Case 3: votes winning state can give < votes a swing state needs. Move on to the next winning state; keep dealing with the current swing state but with a lower number of votes needed to flip (by breaking the current while loop).
-            else:
+            else: #Case 3: votes winning state can give < votes a swing state needs. Move on to the next winning state; keep dealing with the current swing state but with a lower number of votes needed to flip (by breaking the current while loop).
                 marginNeed -= marginGive
                 flip[0][(state.get_name(), swing_states[swing_index].get_name())] = marginGive
                 flip[2] += marginGive
