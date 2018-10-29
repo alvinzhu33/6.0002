@@ -369,7 +369,7 @@ def flip_election(election, swing_states):
                 flip[2] += marginGive
                 break;
 
-    #If we went through every winning state but still have not taken care of each swing state, there is no wway to win the election! Otherwise (if each swing state is already account for), we found the answer!
+    #If we went through every winning state but still have not taken care of each swing state, there is no way to win the election! Otherwise (if each swing state is already accounted for), we found the answer!
     if swing_index < len(swing_states):
         return None;
     return tuple(flip);
