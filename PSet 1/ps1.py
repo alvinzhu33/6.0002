@@ -99,14 +99,16 @@ def load_election_results(filename):
     Returns:
     a list of State instances
     """
-    file = open(filename, 'r');
-    file.readline();
-    states = [];
+    #Deal with file
+    file = open(filename, 'r')
+    file.readline(); #Deals with first line of the file (the headers)
 
+    #Populate a list of state instance by looking over each line of file (aside from the first line which I already dealt with)
+    states = []
     for line in file:
-        info = line.split();
-        states += [State(info[0], int(info[1]), int(info[2]), int(info[3]))]
-    #print(states)
+        info = line.split()
+        states += [State(info[0], int(info[1]), int(info[2]), int(info[3]))];
+
     return states;
 
 # Problem 3
@@ -122,9 +124,11 @@ def find_winner(election):
     Returns:
     a tuple, (winner, loser) of the election i.e. ('dem', 'gop') if Democrats won, else ('gop', 'dem')
     """
+    #Utilize a dictionar to keep track of the winning party based on EC votes. Loop through each state in election and extract the state's EC votes to add to their party key in the dictionary.
     votes = {'gop': 0, 'dem':0}
     for state in election:
         votes[state.get_winner()] += state.get_ecvotes();
+
     if votes['gop'] > votes['dem']:
         return ('gop', 'dem');
     return ('dem', 'gop')
@@ -139,11 +143,13 @@ def states_lost(election):
     Returns:
     A list of State instances lost by the loser (won by the winner)
     """
-    lost = [];
+    #Determine which party won the elecction
     if find_winner(election) == ('gop', 'dem'):
-        winner = 'gop';
+        winner = 'gop'
     else: winner = 'dem';
 
+    #Populate list of State instances won by the winner by looping through each state in the election and appending that state to the list if the winner of the state is the winner of the election
+    lost = []
     for state in election:
         if state.get_winner() == winner:
             lost += [state];
@@ -162,17 +168,18 @@ def ec_votes_reqd(election, total=538):
     Returns:
     int, number of additional EC votes required by the loser to change the election outcome
     """
-    lost = [];
-    votes = 0;
-
+    #Determine loser of election
     if find_winner(election) == ('gop', 'dem'):
         loser = 'dem';
     else: loser = 'gop';
 
+    #Count the number of EC votes garnered by the loser
+    votes = 0
     for state in election:
         if state.get_winner() == loser:
             votes += state.get_ecvotes();
 
+    #To win the election, a party must get half the total number of EC votes + 1. Thus, to get the number of votes a loser needs to win, you need that number - the votes the loser garnered.
     return total//2 + 1 - votes;
 
 # Problem 4
@@ -193,28 +200,35 @@ def greedy_election(lost_states, ec_votes_needed):
     voters relocated to those states (also can be referred to as our swing states)
     The empty list, if no possible swing states
     """
-    stateVotes = {};
+    #Create a dictionary with key as the margin and value as a dictionary where the key is the number of EC votes and the value the state instance;
+    stateVotes = {}
     for state in lost_states:
         if state.get_margin() in stateVotes:
-                stateVotes[state.get_margin()][state.get_ecvotes()] = state;
+                stateVotes[state.get_margin()][state.get_ecvotes()] = state
         else:
             stateVotes[state.get_margin()] = {state.get_ecvotes(): state};
 
-    swings = [];
+    #Populate list of state instances representing swing states by repeatedly determining the state with the least margin, updating the EC votes needed given you obtained those states, and deleting that state from the dictionary
+    swings = []
     while len(stateVotes) > 0:
+        #We're done if we do not need any more EC votes!
         if ec_votes_needed < 1:
             return swings;
-        least = stateVotes[min(stateVotes)];
-        mini = least[max(least)];
-        if len(least) > 1:
-            del least[max(least)];
+
+        minMargin = stateVotes[min(stateVotes)] #Get dictionary value for states with the least margin
+        maxEC = minMargin[max(minMargin)] #Get state for the state with the least margin but greatest EC votes
+        #Remove from the dictionary the state with the least margin but greatest EC votes.
+        if len(minMargin) > 1:
+            del minMargin[max(minMargin)]
         else:
             del stateVotes[min(stateVotes)];
-        ec_votes_needed -= mini.get_ecvotes();
-        swings += [mini];
 
+        ec_votes_needed -= maxEC.get_ecvotes() #Update EC votes needed
+        swings += [maxEC]; #Add that state to swings
+
+    #Return the list if we successfully won the election, else return an empty list.
     if ec_votes_needed < 1:
-        return swings;
+        return swings
     return [];
 
 # Problem 5
@@ -227,21 +241,26 @@ def dp_move_max_voters_get(lost_states, ec_votes, memo = None):
     is less than or equal to the given limit(ec_votes) and the total value(#voters displaced)
     is as large as possible.
     """
+    #Checck if dp instance already in memo
     if (len(lost_states), ec_votes) in memo:
         result = memo[(len(lost_states), ec_votes)]
+    #Check for invalid instances (no more lost states or we surpass the max EC votes)
     elif lost_states == [] or ec_votes <= 0:
         result = (0, ());
+    #Ignore the case when the state at hand has EC votes greater than the max
     elif lost_states[0].get_ecvotes() > ec_votes:
         result = dp_move_max_voters_get(lost_states[1:], ec_votes, memo);
     else:
-        takeVal, takeLeft = dp_move_max_voters_get(lost_states[1:], ec_votes - lost_states[0].get_ecvotes(), memo);
-        takeVal += lost_states[0].get_margin();
-        leaveVal, leaveLeft = dp_move_max_voters_get(lost_states[1:], ec_votes, memo);
+        #Test which case has the greater number of people/margin: if you take that state vs if you leave that state.
+        takeVal, takeLeft = dp_move_max_voters_get(lost_states[1:], ec_votes - lost_states[0].get_ecvotes(), memo)
+        takeVal += lost_states[0].get_margin()
+        leaveVal, leaveLeft = dp_move_max_voters_get(lost_states[1:], ec_votes, memo)
         if takeVal > leaveVal:
-            result = (takeVal, takeLeft + (lost_states[0],));
+            result = (takeVal, takeLeft + (lost_states[0],))
         else:
             result = (leaveVal, leaveLeft);
-    memo[(len(lost_states), ec_votes)] = result;
+    memo[(len(lost_states), ec_votes)] = result #Update the memo with our hard work to save time later!
+
     return result;
 
 def dp_move_max_voters(lost_states, ec_votes, memo = None):
@@ -257,6 +276,8 @@ def dp_move_max_voters(lost_states, ec_votes, memo = None):
     to these states in order to get at most ec_votes
     The empty list, if no possible states
     '''
+    #dp_move_max_voters_get returns  a tuple of length 2 where the first index is the total margin and the second is the list of state instances we actually want.
+    #For a more intuitive dp_move_max_voters_get, I decided to split the code up so that the main function just returns the second element of the tuple
     return dp_move_max_voters_get(lost_states, ec_votes, {})[1];
 
 def move_min_voters(lost_states, ec_votes_needed):
@@ -276,11 +297,14 @@ def move_min_voters(lost_states, ec_votes_needed):
     voters relocated to those states (also can be referred to as our swing states)
     The empty list, if no possible swing states
     """
-    total_ec_votes = 0;
+    #move_min_voters is essentially the complement of dp_move_max_voters. We first calculate the total EC votes received by the loser in the states they won.
+    total_ec_votes = 0
     for state in lost_states:
         total_ec_votes += state.get_ecvotes();
-    maxx = dp_move_max_voters(lost_states, total_ec_votes-ec_votes_needed);
-    minn = [state for state in lost_states if state not in maxx];
+
+    #Call dp_move_max_voters with parameters lost_states and the extra votes they need to win (total EC - votes they need). This gives us the complement of what we want since dp_move_max_voters will tell us which states to phase out (ones with the highest margin and EC votes that are lower than the extra votes we can have)
+    maxx = dp_move_max_voters(lost_states, total_ec_votes-ec_votes_needed)
+    minn = [state for state in lost_states if state not in maxx] #Find complement of bad states
     return minn;
 
 #Problem 6
@@ -306,37 +330,47 @@ def flip_election(election, swing_states):
         - an int, the total number of voters moved
     None, if it is not possible to sway the election
     """
-    lost_states = states_lost(election);
+    #Determine the states we won. If we did not win any states, we cannot win the election!
+    lost_states = states_lost(election)
     win_states = [state for state in election if state not in lost_states];
     if len(win_states) == 0:
         return None;
 
-    flip = [{}, 0, 0];
-    swing_index = 0;
-    marginNeed = swing_states[swing_index].get_margin()+1;
+    #Loop through both the states won and the swing dates to allocate votes from the win states to the swing states
+    flip = [{}, 0, 0] #I chose to deal with a list because I will be modifying the 2nd and 3rd indices.
+    swing_index = 0
+    marginNeed = swing_states[swing_index].get_margin()+1 #To win a state, you need more of your party than the other (it cannot tie). This is the amount of votes a swing state needs to flip.
     for state in win_states:
-        marginGive = state.get_margin()-1;
+        marginGive = state.get_margin()-1 #Amount of votes a winning state can give
         while swing_index < len(swing_states):
+            #Once a swing state is successfully dealt with, move on to the next state
             if marginNeed == 0:
                 marginNeed = swing_states[swing_index].get_margin() + 1;
+
+            #Case 1: votes winning state can give > votes a swing states needs. Move on to the next swing state; Keep dealing with the current winning state but with a lower number of votes they can give.
             if marginGive > marginNeed:
-                marginGive -= marginNeed;
-                flip[0][(state.get_name(), swing_states[swing_index].get_name())] = marginNeed;
-                flip[1] += swing_states[swing_index].get_ecvotes();
-                flip[2] += marginNeed;
-                marginNeed = 0;
+                marginGive -= marginNeed
+                flip[0][(state.get_name(), swing_states[swing_index].get_name())] = marginNeed
+                flip[1] += swing_states[swing_index].get_ecvotes()
+                flip[2] += marginNeed
+                marginNeed = 0
                 swing_index += 1;
+            #Case 2: votes winning state can give = votes a swing states needs. Move on to the next winning state and swing state (by breaking the current while loop).
             elif marginGive == marginNeed:
-                flip[0][(state.get_name(), swing_states[swing_index].get_name())] = marginGive;
-                flip[1] += swing_states[swing_index].get_ecvotes();
-                flip[2] += marginNeed;
-                marginNeed = 0;
-                swing_index += 1;
-            else: #marginGive < marginNeed
-                marginNeed -= marginGive;
-                flip[0][(state.get_name(), swing_states[swing_index].get_name())] = marginGive;
-                flip[2] += marginGive;
+                flip[0][(state.get_name(), swing_states[swing_index].get_name())] = marginGive
+                flip[1] += swing_states[swing_index].get_ecvotes()
+                flip[2] += marginNeed
+                marginNeed = 0
+                swing_index += 1
                 break;
+            #Case 3: votes winning state can give < votes a swing state needs. Move on to the next winning state; keep dealing with the current swing state but with a lower number of votes needed to flip (by breaking the current while loop).
+            else:
+                marginNeed -= marginGive
+                flip[0][(state.get_name(), swing_states[swing_index].get_name())] = marginGive
+                flip[2] += marginGive
+                break;
+
+    #If we went through every winning state but still have not taken care of each swing state, there is no wway to win the election! Otherwise (if each swing state is already account for), we found the answer!
     if swing_index < len(swing_states):
         return None;
     return tuple(flip);
