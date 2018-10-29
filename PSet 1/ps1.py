@@ -311,35 +311,7 @@ def flip_election(election, swing_states):
     if len(win_states) == 0:
         return None;
 
-    flip = [{}, 0, 0]
-    '''win_index = 0;
-    marginGive = win_states[win_index].get_margin()-1;
-    swing_index = 0;
-    marginNeed = swing_states[swing_index].get_margin()+1;
-    while win_index < len(win_states) and swing_index < len(swing_states) and flip[1] < ec_reqd:
-        if marginNeed > marginGive:
-            marginNeed -= marginGive;
-            flip[0][(win_states[win_index].get_name(), swing_states[swing_index].get_name())] = marginGive;
-            flip[2] += marginGive;
-            win_index += 1;
-            marginGive = win_states[win_index].get_margin()-1;
-        elif marginNeed == marginGive:
-            flip[0][(win_states[win_index].get_name(), swing_states[swing_index].get_name())] = marginGive;
-            flip[1] += swing_states[swing_index].get_ecvotes();
-            flip[2] += marginGive;
-            win_index += 1;
-            marginGive = win_states[win_index].get_margin()-1;
-            swing_index += 1;
-            marginNeed = swing_states[swing_index].get_margin()+1;
-        else:
-            marginGive -= marginNeed;
-            flip[0][(win_states[win_index].get_name(), swing_states[swing_index].get_name())] = marginNeed;
-            flip[1] += swing_states[swing_index].get_ecvotes();
-            flip[2] += marginNeed;
-            swing_index += 1;
-            marginNeed = swing_states[swing_index].get_margin()+1;
-    return flip;'''
-
+    flip = [{}, 0, 0];
     swing_index = 0;
     marginNeed = swing_states[swing_index].get_margin()+1;
     for state in win_states:
@@ -365,6 +337,8 @@ def flip_election(election, swing_states):
                 flip[0][(state.get_name(), swing_states[swing_index].get_name())] = marginGive;
                 flip[2] += marginGive;
                 break;
+    if swing_index < len(swing_states):
+        return None;
     return tuple(flip);
 
 
