@@ -1,6 +1,6 @@
 # 6.0002 Problem Set 2
 # Graph Optimization
-# Name:
+# Name: Alvin Zhu
 # Collaborators:
 # Time:
 
@@ -58,32 +58,35 @@ class WeightedEdge(object):
             total_time: int representing the time travelled between the src and dest
             color: string representing the t line color of the edge
         """
-        pass #TODO
-    
+        self.src = src;
+        self.dest = dest;
+        self.total_time = int(total_time);
+        self.color = color;
+
     def get_source(self):
         """ Getter method for WeightedEdge
             returns: Node representing the source node """
-        pass #TODO
+        return self.src;
 
     def get_destination(self):
         """ Getter method for WeightedEdge
             returns: Node representing the destination node """
-        pass #TODO
-    
+        return self.dest;
+
     def get_color(self):
         """ Getter method for WeightedEdge
             returns: String representing the t-line color of the edge"""
-        pass #TODO
-    
+        return self.color;
+
     def get_total_time(self):
         """ Getter method for WeightedEdge
             returns: int representing the time travelled between the source and dest nodes"""
-        pass #TODO
-    
+        return self.total_time;
+
     def __str__(self):
         """ to string method
             returns: string with the format 'src -> dest total_time color' """
-        pass #TODO
+        return (self.src,'->', self.dest, self.total_time, self.color);
 
 
 ## PROBLEM 1: Implement methods of this class based on the given docstring.
@@ -107,22 +110,26 @@ class Digraph(object):
             return: a copy of the list of all of the edges for given node.
                     empty list if the node is not in the graph
         '''
-        pass #TODO
+        return [item for item in edges[node]];
 
     def has_node(self, node):
         ''' param: node object
             return: True, if node is in the graph. False, otherwise.
         '''
-        pass #TODO
+        return node in self.edges;
 
     def add_node(self, node):
         """ param: node object
             Adds a Node object to the Digraph.
             Raises a ValueError if it is already in the graph."""
-        pass #TODO
+        if self.has_node(node):
+            raise ValueError;
+        self.edges[node] = [];
 
     def add_edge(self, edge):
         """ param: WeightedEdge object
             Adds a WeightedEdge instance to the Digraph.
             Raises a ValueError if either of the nodes associated with the edge is not in the graph."""
-        pass #TODO
+        if edge.get_source() in self.nodes and edge.get_destination() in self.nodes:
+            self.edges[edge.get_source()] += [edge.get_destination()];
+            self.edges[edge.get_destination()] += [edge.get_source()];

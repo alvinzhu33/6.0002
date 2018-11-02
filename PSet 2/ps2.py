@@ -44,7 +44,7 @@ def load_map(map_filename):
     Returns:
         a directed graph representing the map
     """
-    pass #TODO
+    
 
 
 # PROBLEM 2c: Testing load_map
@@ -60,7 +60,7 @@ def load_map(map_filename):
 # ANSWER:
 
 # PROBLEM 3b: Implement add_node_to_path
-    
+
 
 def add_node_to_path(node, path):
     """
@@ -68,16 +68,16 @@ def add_node_to_path(node, path):
         path: list composed of [[list of nodes], int]
             Represents the current path of nodes being traversed. Contains
             a list of nodes (Node) and total time traveled
-    
-        node: Node object 
+
+        node: Node object
             Node of t stop being added to the path
-            
+
     Returns:
-        [[list of nodes], int] - A safely COPIED version of path with the Node added to the end of 
+        [[list of nodes], int] - A safely COPIED version of path with the Node added to the end of
         a COPY of the first element of path.
-        
+
         This method should not mutate path or path[0]
-        
+
     """
     pass
     #TODO
@@ -113,13 +113,13 @@ def get_best_path(digraph, start, end, path, restricted_colors, best_time,
         a list of t stops (Nodes).
         The second item is an integer, the length (time traveled)
         of the best path.
-        
+
 
         If there exists no path that satisfies restricted_colors constraints, then return None.
     """
     pass #TODO
-    
-    
+
+
 
 ### USED FOR TESTING. PLEASE DO NOT CHANGE THIS FUNCTION.
 def directed_dfs(digraph, start, end, restricted_colors):
@@ -145,14 +145,14 @@ def directed_dfs(digraph, start, end, restricted_colors):
     """
     path = [[start], 0]  # begin at start node with 0 distance
     result = get_best_path(digraph, start, end, path, restricted_colors, 99999, None)
-    
+
     if result is None:
         raise ValueError("No path from {} to {}".format(start, end))
-    
+
     return result[0]
 
 
-#UNCOMMENT THE FOLLOWING LINES TO DEBUG IF YOU WOULD LIKE TO    
+#UNCOMMENT THE FOLLOWING LINES TO DEBUG IF YOU WOULD LIKE TO
 
 #digr = load_map('t_map.txt')
 
@@ -161,5 +161,3 @@ def directed_dfs(digraph, start, end, restricted_colors):
 #restricted_colors = []
 
 #print(directed_dfs(digr, start, end, restricted_colors))
-
-
