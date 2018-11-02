@@ -21,7 +21,7 @@ from graph import Digraph, Node, WeightedEdge
 # do the graph's edges represent? Where are the times
 # represented?
 #
-# ANSWER:
+# ANSWER: The grah's nodes represents the subway stations. The graph's edges represents the path between two subway stations (in other words, that a subway travels directly between them). The times are represented by the weights assigned to every node.
 
 
 
@@ -44,12 +44,27 @@ def load_map(map_filename):
     Returns:
         a directed graph representing the map
     """
-    
+    dig = Digraph();
+    file = open(map_filename, 'r');
+    for line in file:
+        line = line.split();
+
+        for x in range(2):
+            if not dig.has_node(Node(line[x])):
+                dig.add_node(Node(line[x]));
+
+        info = WeightedEdge(Node(line[0]), Node(line[1]), line[2], line[3])
+        dig.add_edge(info);
+
+        info = WeightedEdge(Node(line[1]), Node(line[0]), line[2], line[3])
+        dig.add_edge(info);
+    return dig;
 
 
 # PROBLEM 2c: Testing load_map
 # Include the lines used to test load_map below, but comment them out
-
+#dig = load_map("test_load_map.txt");
+#print(dig)
 
 # PROBLEM 3: Finding the Shortest Path using Optimized Search Method
 #

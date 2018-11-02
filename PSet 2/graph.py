@@ -86,7 +86,7 @@ class WeightedEdge(object):
     def __str__(self):
         """ to string method
             returns: string with the format 'src -> dest total_time color' """
-        return (self.src,'->', self.dest, self.total_time, self.color);
+        return self.src.get_name() +' -> ' + self.dest.get_name() + " " + str(self.total_time) + " " + self.color;
 
 
 ## PROBLEM 1: Implement methods of this class based on the given docstring.
@@ -110,26 +110,29 @@ class Digraph(object):
             return: a copy of the list of all of the edges for given node.
                     empty list if the node is not in the graph
         '''
-        return [item for item in edges[node]];
+        return [item for item in self.edges[node]];
 
     def has_node(self, node):
         ''' param: node object
             return: True, if node is in the graph. False, otherwise.
         '''
-        return node in self.edges;
+        return node in self.nodes;
 
     def add_node(self, node):
         """ param: node object
             Adds a Node object to the Digraph.
             Raises a ValueError if it is already in the graph."""
-        if self.has_node(node):
+        if node in self.nodes:
             raise ValueError;
+        self.nodes.add(node);
         self.edges[node] = [];
+
 
     def add_edge(self, edge):
         """ param: WeightedEdge object
             Adds a WeightedEdge instance to the Digraph.
             Raises a ValueError if either of the nodes associated with the edge is not in the graph."""
         if edge.get_source() in self.nodes and edge.get_destination() in self.nodes:
-            self.edges[edge.get_source()] += [edge.get_destination()];
-            self.edges[edge.get_destination()] += [edge.get_source()];
+            if edge not in self.edges[edge.get_source()]:
+                self.edges[edge.get_source()] += [edge];
+        else: raise ValueError;
