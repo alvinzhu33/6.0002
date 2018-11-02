@@ -72,7 +72,7 @@ def load_map(map_filename):
 #
 # What is the objective function for this problem? What are the constraints?
 #
-# ANSWER:
+# ANSWER: We are trying to find the shortest path (minimum total time spent travelling) between a source node and destination node. We are constrained by not passing through certain color lines on the T.
 
 # PROBLEM 3b: Implement add_node_to_path
 
@@ -94,8 +94,9 @@ def add_node_to_path(node, path):
         This method should not mutate path or path[0]
 
     """
-    pass
-    #TODO
+    nodeList = path[0];
+    nodeList[0] += [node];
+    return [nodeList, path[1]];
 
 # PROBLEM 3c: Implement get_best_path
 def get_best_path(digraph, start, end, path, restricted_colors, best_time,
