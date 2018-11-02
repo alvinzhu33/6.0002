@@ -4,7 +4,7 @@
 ## Written By: habadio, mkebede
 ## Name: Alvin Zhu
 ## Collaborators:
-## Time:
+## Time: 7 hours
 
 
 # Problem 1

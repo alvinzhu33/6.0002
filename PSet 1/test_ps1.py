@@ -11,7 +11,7 @@ def check_valid_mapping(election, move_voters_result, real_results):
     orig_states_lost = ps1.states_lost(election)
     orig_winner, orig_loser = ps1.find_winner(election)
     election_copy = election[:]
-
+    
     # check if the numbers line up
     if ec_votes != real_results[1] or voters_moved != real_results[2]:
         print("The number of ec_votes gained or voters_moved isn't quite right")
@@ -20,9 +20,9 @@ def check_valid_mapping(election, move_voters_result, real_results):
     # maps the state to the index in the list allows for easy access
     election_dict = {}
     for state_index in range(len(election)):
-        election_dict[election[state_index].get_name()] = state_index
+        election_dict[election[state_index].get_name()] = state_index 
 
-    # make all of the move's suggested in voter_map
+    # make all of the move's suggested in voter_map 
     for state_from, state_to in voter_map:
         from_index, to_index = election_dict[state_from], election_dict[state_to]
         from_margin, to_margin = election_copy[from_index].get_margin(), election_copy[to_index].get_margin()
@@ -32,7 +32,7 @@ def check_valid_mapping(election, move_voters_result, real_results):
         if from_margin-margin_moved < 1:
             print("You lost/tied a State that was already won by the winner.")
             return False
-
+        
         #change the results of the election
         election_copy[from_index].margin = from_margin-margin_moved
         if to_margin - margin_moved < 0:
@@ -41,7 +41,7 @@ def check_valid_mapping(election, move_voters_result, real_results):
         else:
             election_copy[to_index].margin = to_margin-margin_moved
 
-    # check if after all of the changes are made, the election result has been flipped
+    # check if after all of the changes are made, the election result has been flipped 
     new_winner, new_loser = ps1.find_winner(election_copy)
     return new_winner == orig_loser
 
@@ -81,7 +81,7 @@ class TestPS1(unittest.TestCase):
         self.assertEqual(results_2016, gop_won, "For the 2016 election: expected %s, got %s." % (gop_won, results_2016))
         self.assertEqual(results_2012, dem_won, "For the 2012 election: expected %s, got %s." % (gop_won, results_2012))
         self.assertEqual(results_2008, dem_won, "For the 2008 election: expected %s, got %s." % (gop_won, results_2008))
-
+        
     def test_3_states_lost(self):
         real_sample = set(['6.00', '6.0001', '6.0002'])
         real_2016 = set(['AL', 'AK', 'AZ', 'AR', 'FL', 'GA', 'ID', 'IN', 'IA', 'KS', 'KY', 'LA', 'MI', 'MS', 'MO', 'MT', 'NE', 'NC', 'ND', 'OH', 'OK', 'PA', 'SC', 'SD', 'TN', 'TX', 'UT', 'WV', 'WI', 'WY'])
@@ -117,7 +117,7 @@ class TestPS1(unittest.TestCase):
         self.assertEqual(results_2016, real_2016, "For the 2016 election: expected %s, got %s." % (real_2016, results_2016))
         self.assertEqual(results_2012, real_2012, "For the 2012 election: expected %s, got %s." % (real_2012, results_2012))
         self.assertEqual(results_2008, real_2008, "For the 2008 election: expected %s, got %s." % (real_2008, results_2008))
-
+   
     def test_4_greedy_election(self):
         real_sample = set(['6.00'])
         real_2016 = set(['MI', 'WI', 'PA'])
@@ -139,7 +139,7 @@ class TestPS1(unittest.TestCase):
         self.assertEqual(results_sample, real_sample, "For Sample Results: expected %s, got %s." % (list(real_sample), list(results_sample)))
         self.assertEqual(results_2016, real_2016, "For 2016 Results: expected %s, got %s." % (list(real_2016), list(results_2016)))
         self.assertEqual(results_2012, real_2012, "For 2012 Results: expected %s, got %s." % (list(real_2012), list(results_2012)))
-        self.assertEqual(results_2008, real_2008, "For 2008 Results: expected %s, got %s." % (list(real_2008), list(results_2008)))
+        self.assertEqual(results_2008, real_2008, "For 2008 Results: expected %s, got %s." % (list(real_2008), list(results_2008)))     
 
     def test_5_dp_move_max_voters(self):
         real_sample = set([])
@@ -156,15 +156,15 @@ class TestPS1(unittest.TestCase):
         lost_votes_2016 = sum(state.get_ecvotes() for state in lost_2016)
         lost_votes_2012 = sum(state.get_ecvotes() for state in lost_2012)
         lost_votes_2008 = sum(state.get_ecvotes() for state in lost_2008)
-        results_sample = set(state.get_name() for state in ps1.dp_move_max_voters(lost_sample, 2))
+        results_sample = set(state.get_name() for state in ps1.dp_move_max_voters(lost_sample, 2))            
         results_2016 = set(state.get_name() for state in ps1.dp_move_max_voters(lost_2016,lost_votes_2016-votes_reqd_2016))
         results_2012 = set(state.get_name() for state in ps1.dp_move_max_voters(lost_2012,lost_votes_2012-votes_reqd_2012))
         results_2008 = set(state.get_name() for state in ps1.dp_move_max_voters(lost_2008,lost_votes_2008-votes_reqd_2008))
 
-        self.assertEqual(results_sample, real_sample, "For Sample Results: expected States %s, got %s." % (list(real_sample), list(results_sample)))
+        self.assertEqual(results_sample, real_sample, "For Sample Results: expected States %s, got %s." % (list(real_sample), list(results_sample)))        
         self.assertEqual(results_2016, real_2016, "For the 2016 election: expected States %s, got %s." % (list(real_2016), list(results_2016)))
         self.assertEqual(results_2012, real_2012, "For the 2012 election: expected States %s, got %s." % (list(real_2012), list(results_2012)))
-        self.assertEqual(results_2008, real_2008, "For the 2008 election: expected States %s, got %s." % (list(real_2008), list(results_2008)))
+        self.assertEqual(results_2008, real_2008, "For the 2008 election: expected States %s, got %s." % (list(real_2008), list(results_2008)))     
 
     def test_5_move_min_voters(self):
         real_sample = set(['6.00'])
@@ -184,10 +184,10 @@ class TestPS1(unittest.TestCase):
         results_2012 = set(state.get_name() for state in ps1.move_min_voters(lost_2012,votes_2012))
         results_2008 = set(state.get_name() for state in ps1.move_min_voters(lost_2008,votes_2008))
 
-        self.assertEqual(results_sample, real_sample, "For Sample Results: expected States %s, got %s." % (list(real_sample), list(results_sample)))
+        self.assertEqual(results_sample, real_sample, "For Sample Results: expected States %s, got %s." % (list(real_sample), list(results_sample)))        
         self.assertEqual(results_2016, real_2016, "For the 2016 election: expected States %s, got %s." % (list(real_2016), list(results_2016)))
         self.assertEqual(results_2012, real_2012, "For the 2012 election: expected States %s, got %s." % (list(real_2012), list(results_2012)))
-        self.assertEqual(results_2008, real_2008, "For the 2008 election: expected States %s, got %s." % (list(real_2008), list(results_2008)))
+        self.assertEqual(results_2008, real_2008, "For the 2008 election: expected States %s, got %s." % (list(real_2008), list(results_2008)))     
 
     def test_6_flip_election(self):
         real_sample = None
@@ -195,8 +195,8 @@ class TestPS1(unittest.TestCase):
         real_2012 = ({('TX', 'NH'): 39644, ('TX', 'NV'): 67807, ('TX', 'FL'): 74310, ('TX', 'DE'): 77101, ('TX', 'NM'): 79548, ('TX', 'IA'): 91928, ('TX', 'VT'): 106542, ('TX', 'ME'): 109031, ('TX', 'RI'): 122474}, 64, 768385)
         real_2008 = ({('TX', 'FL'): 236451, ('TX', 'IN'): 28392, ('TX', 'IA'): 146562, ('TX', 'NH'): 68293, ('TX', 'NC'): 14178, ('TX', 'OH'): 262225, ('TX', 'VA'): 194593, ('OK', 'VA'): 39935}, 97, 990629)
         election_sample = ps1.load_election_results("sample_results.txt")
-        election_2016 = ps1.load_election_results("2016_results.txt")
-        election_2012 = ps1.load_election_results("2012_results.txt")
+        election_2016 = ps1.load_election_results("2016_results.txt") 
+        election_2012 = ps1.load_election_results("2012_results.txt") 
         election_2008 = ps1.load_election_results("2008_results.txt")
         lost_states_sample, ec_needed_sample = ps1.states_lost(election_sample), ps1.ec_votes_reqd(election_sample)
         lost_states_2016, ec_needed_2016 = ps1.states_lost(election_2016), ps1.ec_votes_reqd(election_2016)
