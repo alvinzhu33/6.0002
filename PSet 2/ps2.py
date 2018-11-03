@@ -1,8 +1,8 @@
 # 6.0002 Problem Set 2
 # Graph optimization
-# Name:
+# Name: Alvin Zhu
 # Collaborators:
-# Time:
+# Time: 4
 
 #
 # Finding shortest paths through the Boston t
@@ -94,9 +94,7 @@ def add_node_to_path(node, path):
         This method should not mutate path or path[0]
 
     """
-    nodeList = path[0];
-    nodeList[0] += [node];
-    return [nodeList, path[1]];
+    return [path[0]+[node], path[1]];
 
 # PROBLEM 3c: Implement get_best_path
 def get_best_path(digraph, start, end, path, restricted_colors, best_time,
@@ -133,8 +131,25 @@ def get_best_path(digraph, start, end, path, restricted_colors, best_time,
 
         If there exists no path that satisfies restricted_colors constraints, then return None.
     """
-    pass #TODO
-
+    if not(digraph.has_node(start) or digraph.has_node(end)):
+        raise ValueError;
+    elif start.get_name() == end.get_name():
+        best_path = path[0];
+        best_time = path[1];
+    else:
+        for edge in digraph.get_edges_for_node(start):
+            #print("1HIII", edge)
+            if edge.get_destination() not in path[0] and edge.get_color() not in restricted_colors:
+                #print("2HIII", edge, path)
+                newPath = [path[0] + [edge.get_destination()], path[1] + edge.get_total_time()];
+                dfs = get_best_path(digraph, edge.get_destination(), end, newPath, restricted_colors, best_time, best_path)
+                if dfs != None and dfs[1] < best_time:
+                    best_path = dfs[0];
+                    best_time = dfs[1];
+    if best_path == None:
+        return None;
+    #print(best_path, best_time)
+    return (best_path, best_time);
 
 
 ### USED FOR TESTING. PLEASE DO NOT CHANGE THIS FUNCTION.
@@ -170,10 +185,11 @@ def directed_dfs(digraph, start, end, restricted_colors):
 
 #UNCOMMENT THE FOLLOWING LINES TO DEBUG IF YOU WOULD LIKE TO
 
-#digr = load_map('t_map.txt')
+digr = load_map('t_map.txt')
+print(digr)
 
-#start = Node('central')
-#end = Node('park_st')
-#restricted_colors = []
+start = Node('central')
+end = Node('park_st')
+restricted_colors = []
 
-#print(directed_dfs(digr, start, end, restricted_colors))
+print(directed_dfs(digr, start, end, restricted_colors))

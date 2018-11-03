@@ -2,7 +2,7 @@
 # Graph Optimization
 # Name: Alvin Zhu
 # Collaborators:
-# Time:
+# Time: 4
 
 #
 # A set of data structures to represent the graphs that you will be using for this pset.
