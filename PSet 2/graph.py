@@ -124,14 +124,15 @@ class Digraph(object):
             Raises a ValueError if it is already in the graph."""
         if node in self.nodes:
             raise ValueError;
-        self.nodes.add(node);
-        self.edges[node] = [];
+        self.nodes.add(node); #Add to a set
+        self.edges[node] = []; #Instantiate a key in edges {}.
 
 
     def add_edge(self, edge):
         """ param: WeightedEdge object
             Adds a WeightedEdge instance to the Digraph.
             Raises a ValueError if either of the nodes associated with the edge is not in the graph."""
+        #Check if both nodes of an edge are in the digraph and whether the edge has already been added.
         if edge.get_source() in self.nodes and edge.get_destination() in self.nodes:
             if edge not in self.edges[edge.get_source()]:
                 self.edges[edge.get_source()] += [edge];

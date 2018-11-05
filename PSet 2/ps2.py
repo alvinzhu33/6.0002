@@ -44,20 +44,24 @@ def load_map(map_filename):
     Returns:
         a directed graph representing the map
     """
-    dig = Digraph();
+    dig = Digraph()
     file = open(map_filename, 'r');
-    for line in file:
-        line = line.split();
 
+    for line in file:
+        line = line.split()
+
+        #Check and add Nodes to the digraph
         for x in range(2):
             if not dig.has_node(Node(line[x])):
                 dig.add_node(Node(line[x]));
 
+        #Add edges to the digraph
         info = WeightedEdge(Node(line[0]), Node(line[1]), line[2], line[3])
-        dig.add_edge(info);
+        dig.add_edge(info)
 
         info = WeightedEdge(Node(line[1]), Node(line[0]), line[2], line[3])
         dig.add_edge(info);
+
     return dig;
 
 
@@ -131,24 +135,33 @@ def get_best_path(digraph, start, end, path, restricted_colors, best_time,
 
         If there exists no path that satisfies restricted_colors constraints, then return None.
     """
+    #Checking if start and end Nodes are in digraph
     if not(digraph.has_node(start) or digraph.has_node(end)):
         raise ValueError;
+
+    #Check if start Node = end Node
     elif start.get_name() == end.get_name():
         best_path = path[0];
         best_time = path[1];
+
     else:
+        #Iterate through connection of a child
         for edge in digraph.get_edges_for_node(start):
-            #print("1HIII", edge)
+            #Check if we already went through that edge and if we are not restricted from that edge
             if edge.get_destination() not in path[0] and edge.get_color() not in restricted_colors:
-                #print("2HIII", edge, path)
-                newPath = [path[0] + [edge.get_destination()], path[1] + edge.get_total_time()];
-                dfs = get_best_path(digraph, edge.get_destination(), end, newPath, restricted_colors, best_time, best_path)
+
+                #Create newPath  with the edge's destination tacked on to original path list and increment travel time 
+                newPath = [path[0] + [edge.get_destination()], path[1] + edge.get_total_time()]
+                dfs = get_best_path(digraph, edge.get_destination(), end, newPath, restricted_colors, best_time, best_path);
+
+                #Deals with multiple paths that go to the destination (pick the lowest time!)
                 if dfs != None and dfs[1] < best_time:
-                    best_path = dfs[0];
+                    best_path = dfs[0]
                     best_time = dfs[1];
+    
+    #Checks if any path exists at all
     if best_path == None:
         return None;
-    #print(best_path, best_time)
     return (best_path, best_time);
 
 
@@ -185,11 +198,11 @@ def directed_dfs(digraph, start, end, restricted_colors):
 
 #UNCOMMENT THE FOLLOWING LINES TO DEBUG IF YOU WOULD LIKE TO
 
-digr = load_map('t_map.txt')
+'''digr = load_map('t_map.txt')
 print(digr)
 
 start = Node('central')
 end = Node('park_st')
 restricted_colors = []
 
-print(directed_dfs(digr, start, end, restricted_colors))
+print(directed_dfs(digr, start, end, restricted_colors))'''
