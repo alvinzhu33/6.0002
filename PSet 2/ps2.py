@@ -21,7 +21,7 @@ from graph import Digraph, Node, WeightedEdge
 # do the graph's edges represent? Where are the times
 # represented?
 #
-# ANSWER: The grah's nodes represents the subway stations. The graph's edges represents the path between two subway stations (in other words, that a subway travels directly between them). The times are represented by the weights assigned to every node.
+# ANSWER: The graph's nodes represents the subway stations. The graph's edges represents the path between two subway stations (in other words, that a subway travels directly between them). The times between connected stations are represented by the weights assigned to every node.
 
 
 
@@ -147,11 +147,15 @@ def get_best_path(digraph, start, end, path, restricted_colors, best_time,
     else:
         #Iterate through connection of a child
         for edge in digraph.get_edges_for_node(start):
+
             #Check if we already went through that edge and if we are not restricted from that edge
             if edge.get_destination() not in path[0] and edge.get_color() not in restricted_colors:
 
-                #Create newPath  with the edge's destination tacked on to original path list and increment travel time 
+                #Create newPath  with the edge's destination tacked on to original path list and increment travel time
+                #Optimize for when next path is longer than shortest path found so far 
                 newPath = [path[0] + [edge.get_destination()], path[1] + edge.get_total_time()]
+                if newPath[1] > best_time:
+                    break;
                 dfs = get_best_path(digraph, edge.get_destination(), end, newPath, restricted_colors, best_time, best_path);
 
                 #Deals with multiple paths that go to the destination (pick the lowest time!)
