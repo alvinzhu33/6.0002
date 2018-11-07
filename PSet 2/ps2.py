@@ -210,3 +210,11 @@ end = Node('park_st')
 restricted_colors = []
 
 print(directed_dfs(digr, start, end, restricted_colors))'''
+
+'''#Personal Testing
+digr = load_map("test_load_map.txt");
+print(digr);
+start = Node('Javitts');
+end = Node('34');
+#print(directed_dfs(digr, start, end, ['S']))
+#print(directed_dfs(digr, start, end, ['R']))'''
