@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Problem Set 3: Simulating robots
-# Name: 
+# Name: Alvin Zhu
 # Collaborators (discussion):
 # Time:
 
@@ -78,7 +78,16 @@ class RectangularRoom(object):
         height: an integer > 0
         dirt_amount: an integer >= 0
         """
-        pass #TODO Implement me
+        self.width = int(width)
+        self.height = int(height)
+        self.dirt_amount = int(dirt_amount);
+
+        self.room = []
+        for y in range(height):
+            row = []
+            for x in range(width):
+                row += [dirt_amount]
+            self.room += [row];
         
     def clean_tile_at_position(self, pos, capacity):
         """
@@ -93,7 +102,11 @@ class RectangularRoom(object):
         Note: The amount of dirt on each tile should be NON-NEGATIVE.
               If the capacity exceeds the amount of dirt on the tile, mark it as 0.
         """
-        pass #TODO Implement me
+        x = math.floor(pos.get_x())
+        y = math.floor(pos.get_y())
+        if capacity > self.room[y][x]:
+            self.room[y][x] = 0
+        else: self.room[y][x] -= capacity;
 
     def is_tile_cleaned(self, m, n):
         """
@@ -109,13 +122,18 @@ class RectangularRoom(object):
         Note: The tile is considered clean only when the amount of dirt on this
               tile is 0.
         """
-        pass #TODO implement me
+        return self.room[n][m] == 0;
 
     def get_num_cleaned_tiles(self):
         """
         Returns: an integer; the total number of clean tiles in the room
         """
-        pass #TODO Implement me
+        count = 0
+        for y in self.room:
+            for x in y:
+                if x == 0:
+                    count += 1
+        return count;
 
     def is_position_in_room(self, pos):
         """
@@ -124,7 +142,9 @@ class RectangularRoom(object):
         pos: a Position object.
         Returns: True if pos is in the room, False otherwise.
         """
-        pass #TODO Implement me
+        x = pos.get_x()
+        y = pos.get_y()
+        return x < self.width and x >= 0 and y >= 0 and y < self.height;
         
     def get_dirt_amount(self, m, n):
         """
@@ -137,19 +157,19 @@ class RectangularRoom(object):
 
         Returns: an integer
         """
-        pass #TODO implement me
+        return self.room[n][m];
  
     def get_num_tiles(self):
         """
         Returns: an integer; the total number of tiles in the room
         """
-        pass #TODO implement me
+        return self.height*self.width;
  
     def get_random_position(self):
         """
         Returns: a Position object; a random position inside the room
         """
-        pass #TODO implement me
+        return Position(random.randrange(self.width), random.randrange(self.height));
 
 
 class Robot(object):
@@ -173,20 +193,24 @@ class Robot(object):
         capacity: a positive interger; the amount of dirt cleaned by the robot 
                   in a single time-step
         """
-        pass #TODO implement me
+        self.room = room
+        self.speed = float(speed)
+        self.capacity = capacity
+        self.pos = room.get_random_position()
+        self.dir = random.randrange(360);
 
     def get_robot_position(self):
         """
         Returns: a Position object giving the robot's position in the room.
         """
-        pass #TODO implement me
+        return self.pos;
 
     def get_robot_direction(self):
         """
         Returns: a float d giving the direction of the robot as an angle in
         degrees, 0.0 <= d < 360.0.
         """
-        pass #TODO implement me
+        return self.dir;
 
     def set_robot_position(self, position):
         """
@@ -194,7 +218,7 @@ class Robot(object):
 
         position: a Position object.
         """
-        pass #TODO implement me
+        self.pos = position;
 
     def set_robot_direction(self, direction):
         """
@@ -202,7 +226,7 @@ class Robot(object):
 
         direction: float representing an angle in degrees
         """
-        pass #TODO implement me
+        self.dir = direction;
 
     def update_position_and_clean(self):
         """
@@ -232,11 +256,20 @@ class SimpleRobot(Robot):
         rotate once to a random new direction, and stay stationary) and clean the dirt on the tile
         by its given capacity. 
         """
-        pass #TODO implement me
+        x = self.pos.get_x() + math.sin(self.dir)*self.speed
+        y = self.pos.get_y() - math.cos(self.dir)*self.speed
+        newPos = Position(x, y)
+        if self.room.is_position_in_room(newPos):
+            self.pos = newPos
+            self.room.clean_tile_at_position(newPos, self.capacity);
+        else:
+            self.dir = random.randrange(360)
+
+
 
 
 # Uncomment this line to see your implementation of SimpleRobot in action!
-#test_robot_movement(SimpleRobot, RectangularRoom)
+test_robot_movement(SimpleRobot, RectangularRoom)
 
 # === Problem 3
 class RobotPlusCat(Robot):
