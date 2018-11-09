@@ -256,9 +256,7 @@ class SimpleRobot(Robot):
         rotate once to a random new direction, and stay stationary) and clean the dirt on the tile
         by its given capacity. 
         """
-        x = self.pos.get_x() + math.sin(self.dir)*self.speed
-        y = self.pos.get_y() - math.cos(self.dir)*self.speed
-        newPos = Position(x, y)
+        newPos = self.pos.get_new_position(self.dir, self.speed)
         if self.room.is_position_in_room(newPos):
             self.pos = newPos
             self.room.clean_tile_at_position(newPos, self.capacity);
