@@ -267,7 +267,7 @@ class SimpleRobot(Robot):
 
 
 # Uncomment this line to see your implementation of SimpleRobot in action!
-test_robot_movement(SimpleRobot, RectangularRoom)
+#test_robot_movement(SimpleRobot, RectangularRoom)
 
 # === Problem 3
 class RobotPlusCat(Robot):
@@ -308,7 +308,15 @@ class RobotPlusCat(Robot):
         SimpleRobot at this time-step (checking if it can move to a new position,
         move there if it can, pick a new direction and stay stationary if it can't)
         """
-        pass #TODO implement me
+        if self.gets_cat_interference():
+            self.dir = random.randrange(360);
+        else:
+            newPos = self.pos.get_new_position(self.dir, self.speed)
+            if self.room.is_position_in_room(newPos):
+                self.pos = newPos
+                self.room.clean_tile_at_position(newPos, self.capacity)
+            else:
+                self.dir = random.randrange(360)
 
         
 #test_robot_movement(RobotPlusCat, RectangularRoom)
@@ -370,11 +378,26 @@ class BoostedRobot(Robot):
         positions and move there if it can, or pick a new direction and stay stationary if it is adjacent 
         to a wall)
         """
-        
-        pass #TODO implement me
+        newPos = self.pos.get_new_position(self.dir, self.speed)
+        if not self.room.is_position_in_room(newPos):
+            self.dir = random.randrange(360);
+        else:
+            self.pos = newPos
+            self.room.clean_tile_at_position(newPos, self.capacity)
+
+            newPos2 = self.pos.get_new_position(self.dir, self.speed)
+            if self.room.is_position_in_room(newPos2):
+                self.pos = newPos2
+                self.room.clean_tile_at_position(newPos2, self.capacity)
+            else:
+                if self.dirties_tile():
+                    self.room.clean_tile_at_position(newPos, -1);
+                self.dir = random.randrange(360)
+                
 
 
-#test_robot_movement(BoostedRobot, RectangularRoom)
+
+test_robot_movement(BoostedRobot, RectangularRoom)
 
 # === Problem 5
 def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_coverage, num_trials,
