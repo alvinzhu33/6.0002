@@ -397,7 +397,7 @@ class BoostedRobot(Robot):
 
 
 
-test_robot_movement(BoostedRobot, RectangularRoom)
+#test_robot_movement(BoostedRobot, RectangularRoom)
 
 # === Problem 5
 def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_coverage, num_trials,
@@ -420,15 +420,25 @@ def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_
     num_trials: an int (num_trials > 0)
     robot_type: class of robot to be instantiated (e.g. SimpleRobot or
                 RobotPlusCat)
-    """
-    pass #TODO implement me
+    """    
+    timesteps = 0
+    for i in range(num_trials):
+        room = RectangularRoom(width, height, dirt_amount)
+        robots = []
+        for i in range(num_robots):
+            robots += [robot_type(room, speed, capacity)]
+        while room.get_num_cleaned_tiles()/room.get_num_tiles() < min_coverage:
+            for robot in robots:
+                robot.update_position_and_clean();
+            timesteps += 1;
+    return timesteps/num_trials;
 
 
-#print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 5, 5, 3, 1.0, 50, SimpleRobot)))
-#print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 10, 10, 3, 0.8, 50, SimpleRobot)))
-#print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 10, 10, 3, 0.9, 50, SimpleRobot)))
-#print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 20, 20, 3, 0.5, 50, SimpleRobot)))
-#print ('avg time steps: ' + str(run_simulation(3, 1.0, 1, 20, 20, 3, 0.5, 50, SimpleRobot)))
+print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 5, 5, 3, 1.0, 50, SimpleRobot)))
+print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 10, 10, 3, 0.8, 50, SimpleRobot)))
+print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 10, 10, 3, 0.9, 50, SimpleRobot)))
+print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 20, 20, 3, 0.5, 50, SimpleRobot)))
+print ('avg time steps: ' + str(run_simulation(3, 1.0, 1, 20, 20, 3, 0.5, 50, SimpleRobot)))
 
 # === Problem 6
 #
@@ -436,12 +446,12 @@ def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_
 #
 # 1)How does the performance of the three robot types compare when cleaning 80%
 #       of a 20x20 room?
-#
+#       When cleaning 80% of a 20x20 room, the BoostedRobot cleans the fastest whereas the RobotPlusCat cleans the slowest. Note how the timings for RobotPlusCat and SimpleRobot are relatively similar whereas the Boosted Robot is almost half that of the SimpleRobot. Furthermore, all three robots have an 1/x shape with regards to the number of robots.
 #
 # 2) How does the performance of the three robot types compare when two of each
 #       robot cleans 80% of rooms with dimensions 
 #       10x30, 20x15, 25x12, and 50x6?
-#
+#       Once again, the fastest robot is the BoostedRobot whereas the slowest is the RobotPlusCat. This time, however, the steps for the simpleRobot and RobotPlusCat are relatively less similar than in Q1. Furthermore, all the timing for all 3 robots gets higher as the aspect ratio strays away from 1.
 #
 
 def show_plot_compare_strategies(title, x_label, y_label):
@@ -492,5 +502,5 @@ def show_plot_room_shape(title, x_label, y_label):
     pylab.show()
 
 
-#show_plot_compare_strategies('Time to clean 80% of a 20x20 room, for various numbers of robots','Number of robots','Time / steps')
-#show_plot_room_shape('Time to clean 80% of a 300-tile room for various room shapes','Aspect Ratio', 'Time / steps')
+show_plot_compare_strategies('Time to clean 80% of a 20x20 room, for various numbers of robots','Number of robots','Time / steps')
+show_plot_room_shape('Time to clean 80% of a 300-tile room for various room shapes','Aspect Ratio', 'Time / steps')
