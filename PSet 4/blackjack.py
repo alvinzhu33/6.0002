@@ -1,7 +1,7 @@
 # Problem Set 4
 # Name: Alvin Zhu
-# Collaborators: <insert collaborators>
-# Time Spent: <x:xx>
+# Collaborators:
+# Time Spent: 5:30
 # Late Days Used: 0
 
 import matplotlib.pyplot as plt
@@ -61,12 +61,15 @@ class BlackJackHand:
         Returns:
         int, best sum of point values of the cards  
         """
+        #Sums up all the cards
         sums = 0
         aces = 0
         for card in cards:
             sums += card.get_val()
             if card.get_rank() == 'A':
                 aces += 1
+        
+        #Accounting for when sums should bust but there are aces
         while sums > 21 and aces > 0:
             sums -= 10
             aces -= 1
@@ -176,9 +179,11 @@ class BlackJackHand:
             - Raises Busted exception (imported from ps4_classes.py) if the
               best value of the player's hand is greater than 21.
         """
+        #Keep adding cards until your strategy tells you to stand
         while strategy(self) == self.hit:
             self.player += [self.deck.deal_card()]
 
+        #Raise Busted error if passed 21
         if self.best_val(self.player) > 21:
             raise Busted
 
@@ -194,9 +199,11 @@ class BlackJackHand:
             - Raises Busted exception (imported from ps4_classes.py) if the
               best value of the dealer's hand is greater than 21.
         """
+        #Keep hitting if value less than 17
         while self.best_val(self.dealer) < 17:
             self.dealer += [self.deck.deal_card()]
 
+        #Raise Busted error if passed 21
         if self.best_val(self.dealer) > 21:
             raise Busted
         
@@ -263,19 +270,19 @@ def play_hand(deck, strategy, bet=1.0):
             return bet*2.5
         return 0;
     
-    #Player busts
+    #Player busts or stays
     try:
         hand.play_player(strategy)
     except Busted:
         return 0;
 
-    #Dealer busts
+    #Dealer busts or stays
     try:
         hand.play_dealer()
     except Busted:
         return bet*2;
     
-    #No one busts
+    #No one busts so check whose best value is larger
     playerVal = hand.best_val(playerCards)
     dealerVal = hand.best_val(dealerCards)
     if playerVal > dealerVal:
@@ -329,20 +336,24 @@ def run_simulation(strategy, bet=2.0, num_decks=8, num_hands=20, num_trials=100,
     returns = []
     totalbet = bet*num_hands
     for trial in range(num_trials):
+        #Calculate the gains from every hand of a single trial and record rate of return
         earnHands = 0
         deck = CardDecks(num_decks, BlackJackCard)
         for hand in range(num_hands):
             earnHands += play_hand(deck, strategy, bet)
         returns.append(100.0 * (earnHands-totalbet)/totalbet)
     
+    #Calculate mean and standard deviation
     mean = np.mean(returns)
     std = np.std(returns)
+
     if show_plot:
         plt.boxplot(returns, showmeans=True)
         plt.title("Player ROI on Playing 20 Hands (" + strategy.__name__ + ")\n(mean = " + str(mean) + "%, SD = " + str(std) + "%)")
         plt.ylabel("% Returns")
         plt.xticks([1],[strategy.__name__])
         plt.show()
+    
     return (returns, mean, std);
 
 
@@ -358,10 +369,12 @@ def run_all_simulations(strategies):
 
         strategies - list of strategies to simulate
     """
+    #Instantiate lists to use for later plotting
     runs = []
     stratTicks = []
     i = 1
     strats = []
+    #Run the simulation for each strategy with the default values
     for strategy in strategies:
         runs.append(run_simulation(strategy))
         stratTicks.append(i)
