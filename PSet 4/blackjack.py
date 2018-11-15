@@ -78,14 +78,14 @@ class BlackJackHand:
         Returns:
         list, a copy of the player's cards 
         """
-        return [item for item in self.player]
+        return self.player
 
     def get_dealer_cards(self):
         """
         Returns:
         list, a copy of the dealer's cards 
         """
-        return [card for card in self.dealer]
+        return self.dealer
 
     def get_dealer_upcard(self):
         """
@@ -156,7 +156,7 @@ class BlackJackHand:
         str, "hit" or "stand" representing the player's decision 
         """
         playerVal = self.best_val(self.player)
-        dealerUp = self.get_dealer_upcard()
+        dealerUp = self.get_dealer_upcard().get_val()
         if playerVal >= 17 or (playerVal >=12 and playerVal <= 17 and dealerUp >= 2 and dealerUp <= 6):
             return self.stand
         return self.hit;
@@ -249,8 +249,35 @@ def play_hand(deck, strategy, bet=1.0):
 
         float, the amount the player gets back
     """
-    # TODO
-    pass
+    hand = BlackJackHand(deck)
+    playerCards = hand.get_player_cards()
+    dealerCards = hand.get_dealer_cards()
+    
+    if len(playerCards) == 2 and hand.best_val(playerCards) == 21 and len(dealerCards) == 2:
+        if hand.best_val(dealerCards) != 21:
+            return bet * 2.5
+        return bet * 2;
+    
+    #Player busts
+    try:
+        hand.play_player(strategy)
+    except Busted:
+        return 0;
+
+    #Dealer busts
+    try:
+        hand.play_dealer()
+    except Busted:
+        return bet*2;
+    
+    #No one busts
+    if hand.best_val(playerCards) > hand.best_val(dealerCards):
+        return bet * 2
+    elif hand.best_val(playerCards) == hand.best_val(dealerCards):
+        return bet
+    else: 
+        return 0;
+
 
 #############
 # PROBLEM 3 #
