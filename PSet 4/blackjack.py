@@ -176,11 +176,11 @@ class BlackJackHand:
             - Raises Busted exception (imported from ps4_classes.py) if the
               best value of the player's hand is greater than 21.
         """
-        if self.best_val(self.player) > 21:
-            raise Busted()
+        while strategy(self) == self.hit:
+            self.player += [self.deck.deal_card()]
 
-        while strategy == self.hit:
-            self.player += [self.deck.deal_card()];
+        if self.best_val(self.player) > 21:
+            raise Busted
 
     def play_dealer(self):
         """
@@ -194,11 +194,12 @@ class BlackJackHand:
             - Raises Busted exception (imported from ps4_classes.py) if the
               best value of the dealer's hand is greater than 21.
         """
-        if self.best_val(self.dealer) > 21:
-            raise Busted();
-
         while self.best_val(self.dealer) < 17:
             self.dealer += [self.deck.deal_card()]
+
+        if self.best_val(self.dealer) > 21:
+            raise Busted
+        
 
     def __str__(self):
         """
