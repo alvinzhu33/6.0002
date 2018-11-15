@@ -254,10 +254,14 @@ def play_hand(deck, strategy, bet=1.0):
     dealerCards = hand.get_dealer_cards()
     
     #Blackjack check
-    if len(playerCards) == 2 and hand.best_val(playerCards) == 21 and len(dealerCards) == 2:
-        if hand.best_val(dealerCards) != 21:
-            return bet * 2.5
-        return bet * 2;
+    playerVal = hand.best_val(playerCards)
+    dealerVal = hand.best_val(dealerCards)
+    if playerVal == 21 or dealerVal == 21:
+        if playerVal == 21:
+            if dealerVal == 21:
+                return bet
+            return bet*2.5
+        return 0;
     
     #Player busts
     try:
@@ -272,9 +276,11 @@ def play_hand(deck, strategy, bet=1.0):
         return bet*2;
     
     #No one busts
-    if hand.best_val(playerCards) > hand.best_val(dealerCards):
+    playerVal = hand.best_val(playerCards)
+    dealerVal = hand.best_val(dealerCards)
+    if playerVal > dealerVal:
         return bet * 2
-    elif hand.best_val(playerCards) == hand.best_val(dealerCards):
+    elif playerVal == dealerVal:
         return bet
     else: 
         return 0;
@@ -327,10 +333,17 @@ def run_simulation(strategy, bet=2.0, num_decks=8, num_hands=20, num_trials=100,
         deck = CardDecks(num_decks, BlackJackCard)
         for hand in range(num_hands):
             earnHands += play_hand(deck, strategy, bet)
-        returns += [100 * (earnHands-totalbet)/totalbet]
+        returns.append(100.0 * (earnHands-totalbet)/totalbet)
     
-    print(np.mean(returns), np.std(returns))
-    return (returns, np.mean(returns), np.std(returns));
+    mean = np.mean(returns)
+    std = np.std(returns)
+    if show_plot:
+        plt.boxplot(returns, showmeans=True)
+        plt.title("Player ROI on Playing 20 Hands (" + strategy.__name__ + ")\n(mean = " + str(mean) + "%, SD = " + str(std) + "%)")
+        plt.ylabel("% Returns")
+        plt.xticks([1],[strategy.__name__])
+        plt.show()
+    return (returns, mean, std);
 
 
 def run_all_simulations(strategies):
@@ -345,17 +358,29 @@ def run_all_simulations(strategies):
 
         strategies - list of strategies to simulate
     """
-    # TODO
-    pass
-
+    runs = []
+    stratTicks = []
+    i = 1
+    strats = []
+    for strategy in strategies:
+        runs.append(run_simulation(strategy))
+        stratTicks.append(i)
+        i += 1
+        strats.append(strategy.__name__)
+    
+    plt.boxplot([runs[0][0], runs[1][0], runs[2][0]], showmeans=True)
+    plt.title("Player ROI Using Different Stategies")
+    plt.ylabel("% Returns")
+    plt.xticks(stratTicks, strats)
+    plt.show()
 
 if __name__ == '__main__':
     # uncomment to test each strategy separately
-#    run_simulation(BlackJackHand.mimic_dealer_strategy, show_plot=True)
-#    run_simulation(BlackJackHand.peek_strategy, show_plot=True)
-#    run_simulation(BlackJackHand.simple_strategy, show_plot=True)
+    run_simulation(BlackJackHand.mimic_dealer_strategy, show_plot=True)
+    run_simulation(BlackJackHand.peek_strategy, show_plot=True)
+    run_simulation(BlackJackHand.simple_strategy, show_plot=True)
 
     # uncomment to run all simulations
-#    run_all_simulations([BlackJackHand.mimic_dealer_strategy,
-#                         BlackJackHand.peek_strategy, BlackJackHand.simple_strategy])
+    run_all_simulations([BlackJackHand.mimic_dealer_strategy,
+                         BlackJackHand.peek_strategy, BlackJackHand.simple_strategy])
     pass
