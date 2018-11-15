@@ -82,11 +82,10 @@ class RectangularRoom(object):
         self.height = int(height)
         self.dirt_amount = int(dirt_amount);
 
+        #Initialize room property that keeps track of the dirt on each tile.
         self.room = []
         for y in range(height):
-            row = []
-            for x in range(width):
-                row += [dirt_amount]
+            row = [dirt_amount]*width
             self.room += [row];
         
     def clean_tile_at_position(self, pos, capacity):
@@ -104,6 +103,8 @@ class RectangularRoom(object):
         """
         x = math.floor(pos.get_x())
         y = math.floor(pos.get_y())
+
+        #Prevent negative dirt amounts
         if capacity > self.room[y][x]:
             self.room[y][x] = 0
         else: self.room[y][x] -= capacity;
@@ -130,9 +131,7 @@ class RectangularRoom(object):
         """
         count = 0
         for y in self.room:
-            for x in y:
-                if x == 0:
-                    count += 1
+            count += y.count(0)
         return count;
 
     def is_position_in_room(self, pos):
@@ -169,7 +168,7 @@ class RectangularRoom(object):
         """
         Returns: a Position object; a random position inside the room
         """
-        return Position(random.randrange(self.width), random.randrange(self.height));
+        return Position(random.random()*self.width, random.random()*self.height);
 
 
 class Robot(object):
@@ -197,7 +196,7 @@ class Robot(object):
         self.speed = float(speed)
         self.capacity = capacity
         self.pos = room.get_random_position()
-        self.dir = random.randrange(360);
+        self.dir = random.random()*360;
 
     def get_robot_position(self):
         """
@@ -226,7 +225,7 @@ class Robot(object):
 
         direction: float representing an angle in degrees
         """
-        self.dir = direction;
+        self.dir = float(direction);
 
     def update_position_and_clean(self):
         """
@@ -257,11 +256,13 @@ class SimpleRobot(Robot):
         by its given capacity. 
         """
         newPos = self.pos.get_new_position(self.dir, self.speed)
+        
+        #Clean tile if new position in room, otherwise rotate
         if self.room.is_position_in_room(newPos):
             self.pos = newPos
-            self.room.clean_tile_at_position(newPos, self.capacity);
+            self.room.clean_tile_at_position(newPos, self.capacity)
         else:
-            self.dir = random.randrange(360)
+            self.dir = random.random()*360;
 
 
 
@@ -308,15 +309,17 @@ class RobotPlusCat(Robot):
         SimpleRobot at this time-step (checking if it can move to a new position,
         move there if it can, pick a new direction and stay stationary if it can't)
         """
+        #Just change direction if cat interferes.
         if self.gets_cat_interference():
-            self.dir = random.randrange(360);
+            self.dir = random.random()*360
         else:
+            #Regular SimpleRobot function
             newPos = self.pos.get_new_position(self.dir, self.speed)
             if self.room.is_position_in_room(newPos):
                 self.pos = newPos
                 self.room.clean_tile_at_position(newPos, self.capacity)
             else:
-                self.dir = random.randrange(360)
+                self.dir = random.random()*360;
 
         
 #test_robot_movement(RobotPlusCat, RectangularRoom)
@@ -379,20 +382,25 @@ class BoostedRobot(Robot):
         to a wall)
         """
         newPos = self.pos.get_new_position(self.dir, self.speed)
+
+        #If new position is not in the room, just update the direction
         if not self.room.is_position_in_room(newPos):
-            self.dir = random.randrange(360);
+            self.dir = random.random()*360
         else:
+            #Clean the tile and get the second step
             self.pos = newPos
             self.room.clean_tile_at_position(newPos, self.capacity)
-
             newPos2 = self.pos.get_new_position(self.dir, self.speed)
+            
+            #Check if second step is in the room
+            #If in the room, clean and update the 2nd tile
             if self.room.is_position_in_room(newPos2):
                 self.pos = newPos2
                 self.room.clean_tile_at_position(newPos2, self.capacity)
-            else:
+            else: #If not in the room, account for dirty walls and rotate
                 if self.dirties_tile():
-                    self.room.clean_tile_at_position(newPos, -1);
-                self.dir = random.randrange(360)
+                    self.room.clean_tile_at_position(newPos, -1)
+                self.dir = random.random()*360
                 
 
 
@@ -422,15 +430,18 @@ def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_
                 RobotPlusCat)
     """    
     timesteps = 0
-    for i in range(num_trials):
+    for trial in range(num_trials):
+        #Instantiate new room and list of robots
         room = RectangularRoom(width, height, dirt_amount)
         robots = []
         for i in range(num_robots):
             robots += [robot_type(room, speed, capacity)]
+        
+        #If not enough clean tiles, make each robot clean a tile and update timestep
         while room.get_num_cleaned_tiles()/room.get_num_tiles() < min_coverage:
             for robot in robots:
-                robot.update_position_and_clean();
-            timesteps += 1;
+                robot.update_position_and_clean()
+            timesteps += 1
     return timesteps/num_trials;
 
 
@@ -446,12 +457,12 @@ def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_
 #
 # 1)How does the performance of the three robot types compare when cleaning 80%
 #       of a 20x20 room?
-#       When cleaning 80% of a 20x20 room, the BoostedRobot cleans the fastest whereas the RobotPlusCat cleans the slowest. Note how the timings for RobotPlusCat and SimpleRobot are relatively similar whereas the Boosted Robot is almost half that of the SimpleRobot. Furthermore, all three robots have an 1/x shape with regards to the number of robots.
+#       When cleaning 80% of a 20x20 room, the BoostedRobot cleans the fastest whereas the RobotPlusCat cleans the slowest. Note how the timings for RobotPlusCat and SimpleRobot are relatively similar whereas the BoostedRobot is almost half that of the SimpleRobot. Furthermore, all three robots have an 1/x shape with regards to the number of robots.
 #
 # 2) How does the performance of the three robot types compare when two of each
 #       robot cleans 80% of rooms with dimensions 
 #       10x30, 20x15, 25x12, and 50x6?
-#       Once again, the fastest robot is the BoostedRobot whereas the slowest is the RobotPlusCat. This time, however, the steps for the simpleRobot and RobotPlusCat are relatively less similar than in Q1. Furthermore, all the timing for all 3 robots gets higher as the aspect ratio strays away from 1.
+#       Once again, the fastest robot is the BoostedRobot whereas the slowest is the RobotPlusCat. This time, however, the steps for the SimpleRobot and RobotPlusCat are relatively less similar than in Q1, but still more similar to each other than the BoostedRobot. Furthermore, the timing for all 3 robots gets higher as the aspect ratio strays away from 1.
 #
 
 def show_plot_compare_strategies(title, x_label, y_label):
