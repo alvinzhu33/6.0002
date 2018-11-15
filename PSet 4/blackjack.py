@@ -253,6 +253,7 @@ def play_hand(deck, strategy, bet=1.0):
     playerCards = hand.get_player_cards()
     dealerCards = hand.get_dealer_cards()
     
+    #Blackjack check
     if len(playerCards) == 2 and hand.best_val(playerCards) == 21 and len(dealerCards) == 2:
         if hand.best_val(dealerCards) != 21:
             return bet * 2.5
@@ -319,8 +320,17 @@ def run_simulation(strategy, bet=2.0, num_decks=8, num_hands=20, num_trials=100,
             - float, the average rate of return across all the trials
             - float, the standard deviation of rates of return across all trials
     """
-    # TODO
-    pass
+    returns = []
+    totalbet = bet*num_hands
+    for trial in range(num_trials):
+        earnHands = 0
+        deck = CardDecks(num_decks, BlackJackCard)
+        for hand in range(num_hands):
+            earnHands += play_hand(deck, strategy, bet)
+        returns += [100 * (earnHands-totalbet)/totalbet]
+    
+    print(np.mean(returns), np.std(returns))
+    return (returns, np.mean(returns), np.std(returns));
 
 
 def run_all_simulations(strategies):
