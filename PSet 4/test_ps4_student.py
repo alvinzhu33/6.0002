@@ -174,8 +174,9 @@ class TestPS4(unittest.TestCase):
             'K', 'S'), *dealer_hand, *player_hand]
 
         def strategy(hand):
-            while hand.deck.num_cards_left() > 0:
+            if hand.deck.num_cards_left() > 0:
                 return BlackJackHand.hit
+            return BlackJackHand.stand
 
         deck = MockCardDecks(4, BlackJackCard, cards_to_deal)
         hand = BlackJackHand(deck)
@@ -189,8 +190,9 @@ class TestPS4(unittest.TestCase):
             '3', 'S'), *dealer_hand, *player_hand]
 
         def strategy(hand):
-            while hand.deck.num_cards_left() > 0:
+            if hand.deck.num_cards_left() > 0:
                 return BlackJackHand.hit
+            return BlackJackHand.stand
 
         deck = MockCardDecks(4, BlackJackCard, cards_to_deal)
         hand = BlackJackHand(deck)

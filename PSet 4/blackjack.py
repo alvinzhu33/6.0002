@@ -160,7 +160,7 @@ class BlackJackHand:
         """
         playerVal = self.best_val(self.player)
         dealerUp = self.get_dealer_upcard().get_val()
-        if playerVal >= 17 or (playerVal >=12 and playerVal <= 17 and dealerUp >= 2 and dealerUp <= 6):
+        if playerVal >= 17 or (playerVal >=12 and playerVal <= 16 and dealerUp >= 2 and dealerUp <= 6):
             return self.stand
         return self.hit;
 
@@ -181,7 +181,7 @@ class BlackJackHand:
         """
         #Keep adding cards until your strategy tells you to stand
         while strategy(self) == self.hit:
-            self.player += [self.deck.deal_card()]
+            self.player.append(self.deck.deal_card())
 
         #Raise Busted error if passed 21
         if self.best_val(self.player) > 21:
@@ -201,7 +201,7 @@ class BlackJackHand:
         """
         #Keep hitting if value less than 17
         while self.best_val(self.dealer) < 17:
-            self.dealer += [self.deck.deal_card()]
+            self.dealer.append(self.deck.deal_card())
 
         #Raise Busted error if passed 21
         if self.best_val(self.dealer) > 21:
