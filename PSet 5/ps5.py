@@ -246,18 +246,20 @@ def evaluate_models_on_training(x, y, models):
         None
     """
     for model in models:
-        deg = len(model)
+        deg = len(model) - 1
         ymodel = []
         for inp in x:
             ypred = 0
             for i in range(len(model)):
-                ypred += inp**(deg-i)*model[i]
+                ypred += (inp**(deg-i))*model[i]
             ymodel += [ypred]
+        ymodel = np.array(ymodel)
         r2 = r2_score(y, ymodel)
         if deg == 2:
             se = se_over_slope(x, y, ymodel, model)
-        plt.plot(x, y)
-        plt.plot(x, ypred)
+        plt.plot(x, y, 'b.')
+        plt.plot(x, ymodel, 'r-')
+        plt.show()
             
         
 
@@ -356,6 +358,18 @@ def evaluate_models_on_testing(x, y, models):
 if __name__ == '__main__':
     
     pass
+
+    #Problem 4A
+    data = Dataset("data.csv")
+    years = []
+    temps = []
+    for year in range(1961, 2016):
+        years += [year]
+        temps += [data.get_daily_temp("BOSTON", 2, 12, year)]
+    years = np.array(years)
+    temps = np.array(temps)
+    fits = generate_models(years, temps, [1])
+    evaluate_models_on_training(years, temps, fits)
 
     # Problem 3A
 
