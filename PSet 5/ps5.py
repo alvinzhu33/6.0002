@@ -213,8 +213,11 @@ def generate_models(x, y, degs):
         a list of numpy arrays, where each array is a 1-d array of coefficients
         that minimizes the squared error of the fitting polynomial
     """
-    #TODO
-    raise NotImplementedError
+    fits = []
+    for deg in degs:
+        fits += [np.polyfit(x, y, deg)]
+
+    return fits;
 
 def evaluate_models_on_training(x, y, models):
     """
@@ -242,8 +245,21 @@ def evaluate_models_on_training(x, y, models):
     Returns:
         None
     """
-    #TODO
-    raise NotImplementedError
+    for model in models:
+        deg = len(model)
+        ymodel = []
+        for inp in x:
+            ypred = 0
+            for i in range(len(model)):
+                ypred += inp**(deg-i)*model[i]
+            ymodel += [ypred]
+        r2 = r2_score(y, ymodel)
+        if deg == 2:
+            se = se_over_slope(x, y, ymodel, model)
+        plt.plot(x, y)
+        plt.plot(x, ypred)
+            
+        
 
 
 def gen_cities_avg(temp, multi_cities, years):
