@@ -413,6 +413,8 @@ if __name__ == '__main__':
     fits = generate_models(years, temps, [1])
     evaluate_models_on_testing(years, temps, fits)'''
 
-    # Problem 5A
-
     # Problem 5B
+    data = Dataset("data.csv")
+    years = list(TRAINING_INTERVAL)
+    avgs = gen_cities_avg(data, ["LOS ANGELES"], years)
+    start, end = find_interval(years, avgs, 30, True)
