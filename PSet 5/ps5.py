@@ -279,8 +279,13 @@ def gen_cities_avg(temp, multi_cities, years):
         this array corresponds to the average annual temperature over the given
         cities for a given year.
     """
-    #TODO
-    raise NotImplementedError
+    means = []
+    for year in years:
+        cityTemps = []
+        for city in multi_cities:
+            cityTemps += [np.average(temp.get_yearly_temp(city, year))]
+        means += [np.average(cityTemps)]
+    return np.array(means)
 
 
 def find_interval(x, y, length, has_positive_slope):
@@ -306,8 +311,20 @@ def find_interval(x, y, length, has_positive_slope):
 
         If such an interval does not exist, returns None
     """
-    #TODO
-    raise NotImplementedError
+    sRet, start = 0, 0
+    eRet, end = length, length
+    slope = linear_regression(x[start:end], y[start:end])[0]
+    while end < len(x):
+        start += 1
+        end += 1
+        compare = linear_regression(x[start:end], y[start:end])[0]
+        if (has_positive_slope and compare >= slope) or (not has_positive_slope and compare <= slope):
+            sRet, eRet = start, end
+            slope = compare
+    if (has_positive_slope and slope < 0) or (not has_positive_slope and slope > 0):
+        return None
+    return (sRet, eRet)
+
 
 def rmse(y, estimated):
     """
@@ -360,7 +377,7 @@ if __name__ == '__main__':
     pass
 
     #Problem 4A
-    data = Dataset("data.csv")
+    '''data = Dataset("data.csv")
     years = []
     temps = []
     for year in range(1961, 2016):
@@ -369,7 +386,7 @@ if __name__ == '__main__':
     years = np.array(years)
     temps = np.array(temps)
     fits = generate_models(years, temps, [1])
-    evaluate_models_on_training(years, temps, fits)
+    evaluate_models_on_training(years, temps, fits)'''
 
     # Problem 3A
 
