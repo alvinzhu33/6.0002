@@ -255,10 +255,13 @@ def evaluate_models_on_training(x, y, models):
             ymodel += [ypred]
         ymodel = np.array(ymodel)
         r2 = r2_score(y, ymodel)
+        title = "Degree: "+deg+"; R^2: "+r2
         if deg == 2:
             se = se_over_slope(x, y, ymodel, model)
+            title += "; SE/slope: " + se
         plt.plot(x, y, 'b.')
         plt.plot(x, ymodel, 'r-')
+        plt.title(title)
         plt.show()
             
         
@@ -339,8 +342,10 @@ def rmse(y, estimated):
     Returns:
         a float for the root mean square error term
     """
-    #TODO
-    raise NotImplementedError
+    summ = 0
+    for i in range(len(y)):
+        summ += (y[i]-estimated[i])**2
+    return (summ/len(y))**.5
 
 
 def evaluate_models_on_testing(x, y, models):
@@ -367,16 +372,25 @@ def evaluate_models_on_testing(x, y, models):
     Returns:
         None
     """
-    #TODO
-    raise NotImplementedError
+    for model in models:
+        deg = len(model) - 1
+        ymodel = []
+        for inp in x:
+            ypred = 0
+            for i in range(len(model)):
+                ypred += (inp**(deg-i))*model[i]
+            ymodel += [ypred]
+        ymodel = np.array(ymodel)
+        r = rmse(y, ymodel)
+        plt.plot(x, y, 'b.')
+        plt.plot(x, ymodel, 'r-')
+        plt.show()
 
 
 
 if __name__ == '__main__':
     
-    pass
-
-    #Problem 4A
+    # Problem 4A
     '''data = Dataset("data.csv")
     years = []
     temps = []
@@ -388,10 +402,17 @@ if __name__ == '__main__':
     fits = generate_models(years, temps, [1])
     evaluate_models_on_training(years, temps, fits)'''
 
-    # Problem 3A
-
-    # Problem 3B
-
     # Problem 4B
+    '''data = Dataset("data.csv")
+    years = []
+    for year in range(1961, 2016):
+        years += [year]
+    temps = gen_cities_avg(data, ["BOSTON"], years)
+    years = np.array(years)
+    temps = np.array(temps)
+    fits = generate_models(years, temps, [1])
+    evaluate_models_on_testing(years, temps, fits)'''
+
+    # Problem 5A
 
     # Problem 5B
