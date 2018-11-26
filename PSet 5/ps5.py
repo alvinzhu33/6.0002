@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # Problem Set 5: Modeling Temperature Change
-# Name: 
-# Collaborators (discussion):
-# Time:
+# Name: Alvin ZHu
+# Collaborators (discussion): None
+# Time: 7
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -247,21 +247,24 @@ def evaluate_models_on_training(x, y, models):
     """
     for model in models:
         deg = len(model) - 1
-        ymodel = []
+        '''ymodel = []
         for inp in x:
             ypred = 0
             for i in range(len(model)):
                 ypred += (inp**(deg-i))*model[i]
             ymodel += [ypred]
-        ymodel = np.array(ymodel)
+        ymodel = np.array(ymodel)'''
+        ymodel = np.polyval(model, x)
         r2 = r2_score(y, ymodel)
-        title = "Degree: "+deg+"; R^2: "+r2
-        if deg == 2:
+        title = "Degree: "+str(deg)+"; R^2: "+str(r2)
+        if deg == 1:
             se = se_over_slope(x, y, ymodel, model)
-            title += "; SE/slope: " + se
+            title += "\nSE/slope: " + str(se)
         plt.plot(x, y, 'b.')
         plt.plot(x, ymodel, 'r-')
         plt.title(title)
+        plt.xlabel("Years")
+        plt.ylabel("Celsius")
         plt.show()
 
 
@@ -371,16 +374,20 @@ def evaluate_models_on_testing(x, y, models):
     """
     for model in models:
         deg = len(model) - 1
-        ymodel = []
+        '''ymodel = []
         for inp in x:
             ypred = 0
             for i in range(len(model)):
                 ypred += (inp**(deg-i))*model[i]
             ymodel += [ypred]
-        ymodel = np.array(ymodel)
+        ymodel = np.array(ymodel)'''
+        ymodel = np.polyval(model, x)
         r = rmse(y, ymodel)
         plt.plot(x, y, 'b.')
         plt.plot(x, ymodel, 'r-')
+        plt.title("Degree: "+str(deg)+"; RSME: "+str(r))
+        plt.xlabel("Years")
+        plt.ylabel("Celsius")
         plt.show()
 
 
@@ -388,32 +395,58 @@ def evaluate_models_on_testing(x, y, models):
 if __name__ == '__main__':
     
     # Problem 4A
-    '''data = Dataset("data.csv")
-    years = []
+    data = Dataset("data.csv")
+    years = np.array(list(range(1961, 2017)))
     temps = []
-    for year in range(1961, 2016):
-        years += [year]
+    for year in years:
         temps += [data.get_daily_temp("BOSTON", 2, 12, year)]
     years = np.array(years)
     temps = np.array(temps)
     fits = generate_models(years, temps, [1])
-    evaluate_models_on_training(years, temps, fits)'''
+    evaluate_models_on_training(years, temps, fits)
 
     # Problem 4B
-    '''data = Dataset("data.csv")
-    years = []
-    for year in range(1961, 2016):
-        years += [year]
+    data = Dataset("data.csv")
+    years = np.array(list(range(1961, 2017)))
     temps = gen_cities_avg(data, ["BOSTON"], years)
     years = np.array(years)
     temps = np.array(temps)
     fits = generate_models(years, temps, [1])
-    evaluate_models_on_testing(years, temps, fits)'''
+    evaluate_models_on_training(years, temps, fits)
 
     # Problem 5B
     data = Dataset("data.csv")
-    years = list(TRAINING_INTERVAL)
+    years = np.array(list(range(1961, 2017)))
     avgs = gen_cities_avg(data, ["LOS ANGELES"], years)
+
     start, end = find_interval(years, avgs, 30, True)
+    modelUp = generate_models(years[start:end], avgs[start:end], [1])
+    evaluate_models_on_training(years[start:end], avgs[start:end], modelUp)
+
+    start, end = find_interval(years, avgs, 30, False)
+    modelDown = generate_models(years[start:end], avgs[start:end], [1])
+    evaluate_models_on_training(years[start:end], avgs[start:end], modelDown)
+
+    model = generate_models(years, avgs, [1])
+    evaluate_models_on_training(years, avgs, model)
+
 
     # Problem 6B
+    data = Dataset("data.csv")
+    natAvTrain = []
+    for year in TRAINING_INTERVAL:
+        cityAv = []
+        for city in CITIES:
+            cityAv += [np.average(data.get_yearly_temp(city, year))]
+        natAvTrain += [np.average(cityAv)]
+    modelsTrain = generate_models(TRAINING_INTERVAL, natAvTrain, [2, 15])
+    evaluate_models_on_training(TRAINING_INTERVAL, natAvTrain, modelsTrain)
+
+    natAvTest = []
+    for year in TESTING_INTERVAL:
+        cityAv = []
+        for city in CITIES:
+            cityAv += [np.average(data.get_yearly_temp(city, year))]
+        natAvTest += [np.average(cityAv)]
+    modelsTest = generate_models(TESTING_INTERVAL, natAvTest, [2, 15])
+    evaluate_models_on_testing(TESTING_INTERVAL, natAvTest, modelsTest)
