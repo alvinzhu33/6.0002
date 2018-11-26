@@ -163,15 +163,15 @@ def linear_regression(x, y):
     """
     xAv = np.average(x)
     yAv = np.average(y)
-
+    
     mNum = 0
     mDen = 0
     for i in range(len(x)):
         mNum += (x[i]-xAv)*(y[i]-yAv)
         mDen += (x[i]-xAv)**2
     m = mNum/mDen
-
-    return (m, yAv - (m*xAv))
+    
+    return (m, yAv - (m*xAv));
 
 def evaluate_squared_error(x, y, m, b): 
     '''
@@ -217,11 +217,11 @@ def generate_models(x, y, degs):
     for deg in degs:
         fits += [np.polyfit(x, y, deg)]
 
-    return fits
+    return fits;
 
 def evaluate_models_on_training(x, y, models):
     """
-    For each regression model, compute the R-squared value for this model and the
+    For each regression model, compute the R-squared value for this model with the
     standard error over slope of a linear regression line (only if the model is
     linear), and plot the data along with the best fit curve.
 
@@ -263,6 +263,8 @@ def evaluate_models_on_training(x, y, models):
         plt.plot(x, ymodel, 'r-')
         plt.title(title)
         plt.show()
+            
+        
 
 
 def gen_cities_avg(temp, multi_cities, years):
@@ -326,6 +328,7 @@ def find_interval(x, y, length, has_positive_slope):
         return None
     return (sRet, eRet)
 
+
 def rmse(y, estimated):
     """
     Calculate the root mean square error term.
@@ -348,7 +351,7 @@ def rmse(y, estimated):
 def evaluate_models_on_testing(x, y, models):
     """
     For each regression model, compute the RMSE for this model and plot the
-    test data along with the model's estimation.
+    test data along with the model’s estimation.
 
     For the plots, you should plot data points (x,y) as blue dots and your best
     fit curve (aka model) as a red solid line. You should also label the axes
@@ -415,5 +418,3 @@ if __name__ == '__main__':
     years = list(TRAINING_INTERVAL)
     avgs = gen_cities_avg(data, ["LOS ANGELES"], years)
     start, end = find_interval(years, avgs, 30, True)
-
-    # Problem 6B
