@@ -400,23 +400,21 @@ if __name__ == '__main__':
     temps = []
     for year in years:
         temps += [data.get_daily_temp("BOSTON", 2, 12, year)]
-    years = np.array(years)
     temps = np.array(temps)
     fits = generate_models(years, temps, [1])
     evaluate_models_on_training(years, temps, fits)
 
     # Problem 4B
-    data = Dataset("data.csv")
-    years = np.array(list(range(1961, 2017)))
+    #data = Dataset("data.csv")
+    #years = np.array(list(range(1961, 2017)))
     temps = gen_cities_avg(data, ["BOSTON"], years)
-    years = np.array(years)
     temps = np.array(temps)
     fits = generate_models(years, temps, [1])
     evaluate_models_on_training(years, temps, fits)
 
     # Problem 5B
-    data = Dataset("data.csv")
-    years = np.array(list(range(1961, 2017)))
+    #data = Dataset("data.csv")
+    #years = np.array(list(range(1961, 2017)))
     avgs = gen_cities_avg(data, ["LOS ANGELES"], years)
 
     start, end = find_interval(years, avgs, 30, True)
@@ -432,7 +430,7 @@ if __name__ == '__main__':
 
 
     # Problem 6B
-    data = Dataset("data.csv")
+    #data = Dataset("data.csv")
     natAvTrain = []
     for year in TRAINING_INTERVAL:
         cityAv = []
