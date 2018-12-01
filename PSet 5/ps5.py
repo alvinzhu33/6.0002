@@ -402,7 +402,7 @@ if __name__ == '__main__':
         temps += [data.get_daily_temp("BOSTON", 2, 12, year)]
     temps = np.array(temps)
     fits = generate_models(years, temps, [1])
-    evaluate_models_on_training(years, temps, fits)
+    #evaluate_models_on_training(years, temps, fits)
 
     # Problem 4B
     #data = Dataset("data.csv")
@@ -410,7 +410,7 @@ if __name__ == '__main__':
     temps = gen_cities_avg(data, ["BOSTON"], years)
     temps = np.array(temps)
     fits = generate_models(years, temps, [1])
-    evaluate_models_on_training(years, temps, fits)
+    #evaluate_models_on_training(years, temps, fits)
 
     # Problem 5B
     #data = Dataset("data.csv")
@@ -419,32 +419,22 @@ if __name__ == '__main__':
 
     start, end = find_interval(years, avgs, 30, True)
     modelUp = generate_models(years[start:end], avgs[start:end], [1])
-    evaluate_models_on_training(years[start:end], avgs[start:end], modelUp)
+    #evaluate_models_on_training(years[start:end], avgs[start:end], modelUp)
 
     start, end = find_interval(years, avgs, 30, False)
     modelDown = generate_models(years[start:end], avgs[start:end], [1])
-    evaluate_models_on_training(years[start:end], avgs[start:end], modelDown)
+    #evaluate_models_on_training(years[start:end], avgs[start:end], modelDown)
 
     model = generate_models(years, avgs, [1])
-    evaluate_models_on_training(years, avgs, model)
+    #evaluate_models_on_training(years, avgs, model)
 
 
     # Problem 6B
     #data = Dataset("data.csv")
-    natAvTrain = []
-    for year in TRAINING_INTERVAL:
-        cityAv = []
-        for city in CITIES:
-            cityAv += [np.average(data.get_yearly_temp(city, year))]
-        natAvTrain += [np.average(cityAv)]
+    natAvTrain = gen_cities_avg(data, CITIES, TRAINING_INTERVAL)
     modelsTrain = generate_models(TRAINING_INTERVAL, natAvTrain, [2, 15])
     evaluate_models_on_training(TRAINING_INTERVAL, natAvTrain, modelsTrain)
 
-    natAvTest = []
-    for year in TESTING_INTERVAL:
-        cityAv = []
-        for city in CITIES:
-            cityAv += [np.average(data.get_yearly_temp(city, year))]
-        natAvTest += [np.average(cityAv)]
+    natAvTest = gen_cities_avg(data, CITIES, TESTING_INTERVAL)
     modelsTest = generate_models(TESTING_INTERVAL, natAvTest, [2, 15])
     evaluate_models_on_testing(TESTING_INTERVAL, natAvTest, modelsTest)
