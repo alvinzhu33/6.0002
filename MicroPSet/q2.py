@@ -246,4 +246,9 @@ print(exchange_money(exchange_rates, 1, "KOR", "AUS"))
 print(exchange_money(exchange_rates, 1, "AUS", "IND"))
 print(exchange_money(exchange_rates, 1, "USD", "MXN"))
 print(exchange_money(exchange_rates, 1.5, "USD", "MXN"))
-print(exchange_money(exchange_rates, 2, "USD", "MXN"))'''
+print(exchange_money(exchange_rates, 2, "USD", "MXN"))
+ex = [["A", "B", 2], ["B","C",2], ["C", "D", 2], ["A", "E", 5], ["E", "C", 2]]
+print(exchange_money(ex, 1, "A", "C"))
+exchange_rates = [["USD", "EUR", 0.88], ["MXN", "JPY", 5.57], ["JPY", "EUR",0.0078]]
+print(exchange_money(exchange_rates, 3, "USD", "MXN"))
+'''

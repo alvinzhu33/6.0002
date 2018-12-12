@@ -230,7 +230,11 @@ def buildPatriotsData(players, toScale = False):
         points.append(Player(players[i][0][0], features, players[i][1]))
     return points
 
-#for n in range(20):
-#    players = buildPatriotsData(pats, True)
-#    bestClustering = trykmeans(players, 4, 40)
-#    print(round(dissimilarity(bestClustering), 4))
+'''for n in range(20):
+    players = buildPatriotsData(pats, True)
+    bestClustering = trykmeans(players, 4, 40)
+    print(round(dissimilarity(bestClustering), 4))
+players = buildPatriotsData(pats, True)
+bestClustering = trykmeans(players, 4, 40)
+print(round(dissimilarity(bestClustering), 4))
+'''
