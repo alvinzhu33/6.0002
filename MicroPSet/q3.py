@@ -49,7 +49,7 @@ def greedy_cow_transport(cows,limit=10):
 	return transports
 
 
-'''cows = {"A": 6, "B": 3, "C": 2, "D": 4}
+cows = {"A": 6, "B": 3, "C": 2, "D": 4}
 print(greedy_cow_transport(cows, 10))
 cows = {"A": 6, "B": 4, "C": 4, "D": 4}
 print(greedy_cow_transport(cows, 10))
@@ -57,5 +57,6 @@ cows = {"A": 6, "B": 3, "C": 2, "D": 5}
 print(greedy_cow_transport(cows, 10))
 cows = {"A": 6, "B": 3, "C": 2, "D": 5}
 print(greedy_cow_transport(cows, 3))
-cows = {"A": 50, "B": 10, "C": 40, "D":900}
-print(greedy_cow_transport(cows, 100))'''
+cows = {"A": 50, "B": 10, "C": 20, "D":900}
+print(greedy_cow_transport(cows, 100))
+print(greedy_cow_transport(cows, 1))

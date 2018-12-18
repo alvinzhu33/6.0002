@@ -41,6 +41,6 @@ def average_streak_count(n, streak, num_trials):
     return (sum(counts)/num_trials, round(1.96*get_mean_std(counts)[1]/num_trials**.5, 4))
         
 
-#for x in range(10):
-#    print(average_streak_count(6, "HTH", 10000))
-#print(average_streak_count(0, "H", 1000))
+for x in range(10):
+    print(average_streak_count(6, "HTH", 10000))
+print(average_streak_count(10, "HTTTTTTTTTTTTTTt", 1000))
